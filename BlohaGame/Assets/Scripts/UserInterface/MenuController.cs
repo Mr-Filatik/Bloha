@@ -15,13 +15,11 @@ public class MenuController : MonoBehaviour
     public GameObject gameJumpButton = null;
 
     public GameObject[] steps = null;
-
-    public GameObject gameWillingness = null;
     #endregion
 
     #region SecretField
     private bool game = false;
-    private float speed = 2f;
+    [SerializeField] private float speed = 2f;
     private int health = 3;
     private int[,] map = new int[9,3];
     private float startPosition = 0f;
@@ -29,8 +27,9 @@ public class MenuController : MonoBehaviour
     GameObject[] spawnedObjects;
     GameObject player;
     Vector3 coordinates;
-    float jumpBorder = 80;
-    float jumpBorderAuto = 20;
+    //float jumpBorder = 80;//убрать
+    float jumpBorderAuto = 20;//?
+    private float timeForButton;
     Vector3 fromPosition;
     Vector3 toPosition;
     int direction = 0;
@@ -78,17 +77,7 @@ public class MenuController : MonoBehaviour
             coordinates = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y - Time.deltaTime * 10 * speed, player.transform.localPosition.z);
             player.transform.localPosition = coordinates;
 
-            LadderMovement();
-
-            //ready to jump
-            if (player.transform.localPosition.y < jumpBorder)
-            {
-                gameWillingness.SetActive(true);
-            }
-            else
-            {
-                gameWillingness.SetActive(false);
-            }
+            LadderMovement(); //update
 
             //authomatic jump
             if (player.transform.localPosition.y < jumpBorderAuto)
@@ -106,10 +95,6 @@ public class MenuController : MonoBehaviour
         {
             coordinates = new Vector3(steps[i].transform.localPosition.x, steps[i].transform.localPosition.y - Time.deltaTime * 10 * speed, steps[i].transform.localPosition.z);
             steps[i].transform.localPosition = coordinates;
-        }
-
-        for (int i = steps.Length - 1; i >= 0; i--)
-        {
             steps[steps.Length - i - 1].transform.localScale = new Vector3((float)(100 - i * 2 + (-steps[steps.Length - 1].transform.localPosition.y * 2) / 100) / 100, 1, 1);
         }
 
@@ -125,24 +110,36 @@ public class MenuController : MonoBehaviour
             steps[0].transform.localPosition = coordinates;
             steps[0].transform.SetSiblingIndex(0);
             //продолжить
+
         }
-        /*for (int i = map.GetLength(0) - 1; i >= 0; i--)
-        {
-            spawnedObject = Instantiate(step);
-            spawnedObject.transform.SetParent(steps.transform, false);
-            spawnedObject.transform.localPosition = new Vector3(0, startPosition + i * 106, 0);
-            spawnedObject.transform.localScale = new Vector3((float)(100 - i * 2 + (-startPosition * 2) / 100) / 100, 1, 1);
-        }*/
     }
 
-    public void JumpButton()
+    public void JumpButtonUp()
     {
-        if (player.transform.localPosition.y < jumpBorder)
+        //maybe you need to add fatigue after a long press
+        if (Time.realtimeSinceStartup - timeForButton > 1f)
+        {
+            //jump over a step
+            Debug.Log("Long jump");
+        }
+        else
+        {
+            //jump to the next step
+            Debug.Log("Short jump");
+        }
+        /*if (Time.realtimeSinceStartup - timeForButton > 2f)
         {
             Vector3 fromPosition = player.transform.localPosition;
             Vector3 toPosition = new Vector3(fromPosition.x, fromPosition.y + 100, fromPosition.z);
             player.transform.localPosition = Vector3.Lerp(fromPosition, toPosition, 1);
-        }
+
+            timeForButton = Time.realtimeSinceStartup;
+        }*/
+    }
+
+    public void JumpButtonDown()
+    {
+        timeForButton = Time.realtimeSinceStartup;
     }
 
     public void PlayButton()
