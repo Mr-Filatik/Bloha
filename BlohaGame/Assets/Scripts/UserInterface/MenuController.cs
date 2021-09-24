@@ -14,14 +14,14 @@ public class MenuController : MonoBehaviour
     public GameObject gamePauseButton = null;
     public GameObject gameJumpButton = null;
 
-    public GameObject steps = null;
-    public GameObject step = null;
+    public GameObject[] steps = null;
+
+    public GameObject gameWillingness = null;
     #endregion
 
     #region SecretField
     private bool game = false;
-    //private float playerCoordinate = 0;
-    private float speed = 1f;
+    private float speed = 2f;
     private int health = 3;
     private int[,] map = new int[9,3];
     private float startPosition = 0f;
@@ -29,6 +29,12 @@ public class MenuController : MonoBehaviour
     GameObject[] spawnedObjects;
     GameObject player;
     Vector3 coordinates;
+    float jumpBorder = 80;
+    float jumpBorderAuto = 20;
+    Vector3 fromPosition;
+    Vector3 toPosition;
+    int direction = 0;
+    float timeForDirection = 0;
     #endregion
 
     void Awake()
@@ -44,6 +50,11 @@ public class MenuController : MonoBehaviour
         for (int i = 0; i < gameStart.Length; i++)
         {
             gameStart[i].SetActive(false);
+        }
+
+        for (int i = steps.Length - 1; i >= 0; i--)
+        {
+            steps[steps.Length - i - 1].transform.localPosition = new Vector3(0, i * 102, 0);
         }
 
         for (int i = 0; i < map.GetLength(0); i++)
@@ -64,54 +75,69 @@ public class MenuController : MonoBehaviour
     {
         if (game)
         {
-            spawnedObjects = GameObject.FindGameObjectsWithTag("Step");
-            foreach (GameObject item in spawnedObjects)
-            {
-                Destroy(item);
-            }
-
-            if (startPosition <= -100)
-            {
-                startPosition = 0f;
-                Step();
-            }
-            else
-            {
-                startPosition -= Time.deltaTime * 10 * speed;
-            }
-
             coordinates = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y - Time.deltaTime * 10 * speed, player.transform.localPosition.z);
             player.transform.localPosition = coordinates;
 
-            for (int i = 0; i < map.GetLength(0); i++)
+            LadderMovement();
+
+            //ready to jump
+            if (player.transform.localPosition.y < jumpBorder)
             {
-                spawnedObject = Instantiate(step);
-                spawnedObject.transform.SetParent(steps.transform, false);
-                spawnedObject.transform.localPosition = new Vector3(0, startPosition + i * 100, 0);
+                gameWillingness.SetActive(true);
+            }
+            else
+            {
+                gameWillingness.SetActive(false);
             }
 
-            //player
-            if (player.transform.localPosition.y < 10)
+            //authomatic jump
+            if (player.transform.localPosition.y < jumpBorderAuto)
             {
-                Vector3 fromPosition = player.transform.localPosition;
-                Vector3 toPosition = new Vector3(fromPosition.x, fromPosition.y + 100, fromPosition.z);
+                fromPosition = player.transform.localPosition;
+                toPosition = new Vector3(fromPosition.x, fromPosition.y + 100, fromPosition.z);
                 player.transform.localPosition = Vector3.Lerp(fromPosition, toPosition, 1);
             }
         }
     }
 
-    void Step()
+    void LadderMovement()
     {
-        int[] array = new int[3];
-        for (int i = 0; i < map.GetLength(0); i++)
+        for (int i = steps.Length - 1; i >= 0; i--)
         {
-            //
+            coordinates = new Vector3(steps[i].transform.localPosition.x, steps[i].transform.localPosition.y - Time.deltaTime * 10 * speed, steps[i].transform.localPosition.z);
+            steps[i].transform.localPosition = coordinates;
         }
+
+        for (int i = steps.Length - 1; i >= 0; i--)
+        {
+            steps[steps.Length - i - 1].transform.localScale = new Vector3((float)(100 - i * 2 + (-steps[steps.Length - 1].transform.localPosition.y * 2) / 100) / 100, 1, 1);
+        }
+
+        if (steps[steps.Length - 2].transform.localScale.x >= 1)
+        {
+            GameObject none = steps[steps.Length - 1];
+            for (int i = steps.Length - 1; i > 0; i--)
+            {
+                steps[i] = steps[i - 1];
+            }
+            steps[0] = none;
+            coordinates = new Vector3(steps[0].transform.localPosition.x, steps[1].transform.localPosition.y + 100, steps[0].transform.localPosition.z);
+            steps[0].transform.localPosition = coordinates;
+            steps[0].transform.SetSiblingIndex(0);
+            //продолжить
+        }
+        /*for (int i = map.GetLength(0) - 1; i >= 0; i--)
+        {
+            spawnedObject = Instantiate(step);
+            spawnedObject.transform.SetParent(steps.transform, false);
+            spawnedObject.transform.localPosition = new Vector3(0, startPosition + i * 106, 0);
+            spawnedObject.transform.localScale = new Vector3((float)(100 - i * 2 + (-startPosition * 2) / 100) / 100, 1, 1);
+        }*/
     }
 
     public void JumpButton()
     {
-        if (player.transform.localPosition.y < 50)
+        if (player.transform.localPosition.y < jumpBorder)
         {
             Vector3 fromPosition = player.transform.localPosition;
             Vector3 toPosition = new Vector3(fromPosition.x, fromPosition.y + 100, fromPosition.z);
@@ -124,12 +150,7 @@ public class MenuController : MonoBehaviour
         menuPanel.SetActive(false);
         gamePanel.SetActive(true);
 
-        for (int i = 0; i < map.GetLength(0); i++)
-        {
-            spawnedObject = Instantiate(step);
-            spawnedObject.transform.SetParent(steps.transform, false);
-            spawnedObject.transform.localPosition = new Vector3(0, startPosition + i * 100, 0);
-        }
+        LadderMovement();
 
         StartCoroutine(startWaiter());
     }
@@ -176,12 +197,18 @@ public class MenuController : MonoBehaviour
 
     public void PauseButton()
     {
+
         MenuButton();
     }
 
     public void MenuButton()
     {
         menuPanel.SetActive(true);
+
+        game = false;
+        gameJumpButton.SetActive(false);
+        gamePauseButton.SetActive(false);
+
         gamePanel.SetActive(false);
     }
 
