@@ -19,9 +19,14 @@ public class MenuController : MonoBehaviour
 
     #region SecretField
     private bool game = false;
-    [SerializeField] private float speed = 2f;
-    private int health = 3;
-    private int[,] map = new int[9,3];
+
+    [SerializeField] private float speed;
+    private float speedDefault = 2f;
+    private int[,] map = new int[12, 3];
+
+    private int playerHealth = 3;
+    [SerializeField] private int playerStep = 1;
+
     private float startPosition = 0f;
     GameObject spawnedObject;
     GameObject[] spawnedObjects;
@@ -29,7 +34,10 @@ public class MenuController : MonoBehaviour
     Vector3 coordinates;
     //float jumpBorder = 80;//убрать
     float jumpBorderAuto = 20;//?
+
+    [SerializeField] private float cooldownForJumpButton = 1f;
     private float timeForButton;
+
     Vector3 fromPosition;
     Vector3 toPosition;
     int direction = 0;
@@ -67,25 +75,36 @@ public class MenuController : MonoBehaviour
 
     void Start()
     {
-
+        playerStep = 1;
+        coordinates = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y - Time.deltaTime * 10 * speed, player.transform.localPosition.z);
+        player.transform.localPosition = coordinates;
     }
 
     void Update()
     {
         if (game)
         {
-            coordinates = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y - Time.deltaTime * 10 * speed, player.transform.localPosition.z);
-            player.transform.localPosition = coordinates;
+            if (true)
+            {
+
+            }
+            speed = speedDefault + Time.deltaTime * 10 * playerStep * steps[0].transform.position.y / 100; //исправить
+
+
+            /*coordinates = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y - Time.deltaTime * 10 * speed, player.transform.localPosition.z);
+            player.transform.localPosition = coordinates;*/
 
             LadderMovement(); //update
 
-            //authomatic jump
+            //authomatic jump 
+            /*
             if (player.transform.localPosition.y < jumpBorderAuto)
             {
                 fromPosition = player.transform.localPosition;
                 toPosition = new Vector3(fromPosition.x, fromPosition.y + 100, fromPosition.z);
                 player.transform.localPosition = Vector3.Lerp(fromPosition, toPosition, 1);
             }
+            */
         }
     }
 
@@ -110,20 +129,30 @@ public class MenuController : MonoBehaviour
             steps[0].transform.localPosition = coordinates;
             steps[0].transform.SetSiblingIndex(0);
             //продолжить
-
+            if (playerStep > 0)
+            {
+                playerStep--;
+            }
         }
+    }
+
+    void LadderMovementReverse(int number)
+    {
+        //maybe not needed
     }
 
     public void JumpButtonUp()
     {
         //maybe you need to add fatigue after a long press
-        if (Time.realtimeSinceStartup - timeForButton > 1f)
+        if (Time.realtimeSinceStartup - timeForButton > cooldownForJumpButton)
         {
+            playerStep+=2;
             //jump over a step
             Debug.Log("Long jump");
         }
         else
         {
+            playerStep++;
             //jump to the next step
             Debug.Log("Short jump");
         }
@@ -194,7 +223,6 @@ public class MenuController : MonoBehaviour
 
     public void PauseButton()
     {
-
         MenuButton();
     }
 
