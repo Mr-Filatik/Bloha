@@ -59,11 +59,20 @@ public class MenuController : MonoBehaviour
             gameStart[i].SetActive(false);
         }
 
-        steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, 0, 0);
+        /*steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, 0, 0);
         for (int i = 1; i < steps.GetLength(0); i++)
         {
             steps[i].transform.localPosition = new Vector3(0, i * 108 * steps[i].transform.localScale.x, 0); //i * 108 - 108 * i * 0.02f
+        }*/
+
+        steps[0].transform.localPosition = new Vector3(0, 0, 0);
+        steps[0].transform.localScale = new Vector3(1, 1, 1);
+        for (int i = 1; i < steps.GetLength(0); i++)
+        {
+            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + 108 * (steps[i - 1].transform.localScale.x - 0.02f), 0); //i * 108 - 108 * i * 0.02f
+            steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - 0.02f, steps[i - 1].transform.localScale.y - 0.02f, 0);
         }
+        
 
         /*steps[0].transform.localPosition = new Vector3(0, 0, 0);
         steps[0].transform.localScale = new Vector3(1, 1, 1);
@@ -128,17 +137,8 @@ public class MenuController : MonoBehaviour
 
             steps[i].transform.localPosition = coordinates;
         }
-        /*for (int i = steps.Length - 1; i >= 0; i--)
-        {
-            steps[steps.Length - i - 1].transform.localScale = new Vector3((float)(100 - i * 2 + (-steps[steps.Length - 1].transform.localPosition.y * 2) / 100) / 100, (float)(100 - i * 2 + (-steps[steps.Length - 1].transform.localPosition.y * 2) / 100) / 100, 1);
 
-            coordinates = new Vector3(steps[i].transform.localPosition.x, steps[i].transform.localPosition.y - Time.deltaTime * 10 * speed * steps[i].transform.localScale.x, steps[i].transform.localPosition.z);
-
-            steps[i].transform.localPosition = coordinates;
-            
-        }*/
-
-        if (steps[1].transform.localScale.x >= 1)
+        if (steps[1].transform.localScale.y >= 1)
         {
             GameObject none = steps[0];
             for (int i = 1; i < steps.GetLength(0); i++)
@@ -146,33 +146,14 @@ public class MenuController : MonoBehaviour
                 steps[i - 1] = steps[i];
             }
             steps[steps.GetLength(0) - 1] = none;
-            coordinates = new Vector3(steps[0].transform.localPosition.x, steps[steps.GetLength(0) - 2].transform.localPosition.y + 108 * (steps[steps.GetLength(0) - 1].transform.localScale.x - 0.02f), steps[0].transform.localPosition.z);
-            steps[0].transform.localPosition = coordinates;
-            steps[0].transform.SetSiblingIndex(0);
+            steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, steps[steps.GetLength(0) - 2].transform.localPosition.y + 108 * (steps[steps.GetLength(0) - 2].transform.localScale.x - 0.02f), 0);
+            steps[steps.GetLength(0) - 1].transform.SetSiblingIndex(0);
             //продолжить
             if (playerStep > 0)
             {
                 playerStep--;
             }
         }
-
-        /*if (steps[steps.Length - 2].transform.localScale.x >= 1)
-        {
-            GameObject none = steps[steps.Length - 1];
-            for (int i = steps.Length - 1; i > 0; i--)
-            {
-                steps[i] = steps[i - 1];
-            }
-            steps[0] = none;
-            coordinates = new Vector3(steps[0].transform.localPosition.x, steps[1].transform.localPosition.y + 108 * (steps[1].transform.localScale.x - 0.02f), steps[0].transform.localPosition.z);
-            steps[0].transform.localPosition = coordinates;
-            steps[0].transform.SetSiblingIndex(0);
-            //продолжить
-            if (playerStep > 0)
-            {
-                playerStep--;
-            }
-        }*/
     }
 
     void LadderMovementReverse(int number)
