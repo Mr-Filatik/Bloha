@@ -15,6 +15,8 @@ public class MenuController : MonoBehaviour
     public GameObject gameJumpButton = null;
 
     public GameObject[] steps = null;
+
+    public GameObject[] lets = null;
     #endregion
 
     #region SecretField
@@ -59,31 +61,13 @@ public class MenuController : MonoBehaviour
             gameStart[i].SetActive(false);
         }
 
-        /*steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, 0, 0);
-        for (int i = 1; i < steps.GetLength(0); i++)
-        {
-            steps[i].transform.localPosition = new Vector3(0, i * 108 * steps[i].transform.localScale.x, 0); //i * 108 - 108 * i * 0.02f
-        }*/
-
         steps[0].transform.localPosition = new Vector3(0, 0, 0);
         steps[0].transform.localScale = new Vector3(1, 1, 1);
         for (int i = 1; i < steps.GetLength(0); i++)
         {
-            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + 108 * (steps[i - 1].transform.localScale.x - 0.02f), 0); //i * 108 - 108 * i * 0.02f
+            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + 108 * (steps[i - 1].transform.localScale.x - 0.02f), 0);
             steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - 0.02f, steps[i - 1].transform.localScale.y - 0.02f, 0);
         }
-        
-
-        /*steps[0].transform.localPosition = new Vector3(0, 0, 0);
-        steps[0].transform.localScale = new Vector3(1, 1, 1);
-        steps[1].transform.localPosition = new Vector3(0, 108, 0);
-        steps[1].transform.localScale = new Vector3(0.98f, 0.98f, 1);
-        for (int i = 2; i < steps.GetLength(0); i++)
-        {
-            //float a = steps[i].transform.localScale.y * 108;
-            //steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + 108 * steps[i - 1].transform.localScale.y, 0);
-            //steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - 0.02f, steps[i - 1].transform.localScale.x - 0.02f, 1);
-        }*/
 
         for (int i = 0; i < map.GetLength(0); i++)
         {
@@ -148,6 +132,9 @@ public class MenuController : MonoBehaviour
             steps[steps.GetLength(0) - 1] = none;
             steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, steps[steps.GetLength(0) - 2].transform.localPosition.y + 108 * (steps[steps.GetLength(0) - 2].transform.localScale.x - 0.02f), 0);
             steps[steps.GetLength(0) - 1].transform.SetSiblingIndex(0);
+
+            CreateLets(steps[steps.GetLength(0) - 1]);
+
             //продолжить
             if (playerStep > 0)
             {
@@ -159,6 +146,14 @@ public class MenuController : MonoBehaviour
     void LadderMovementReverse(int number)
     {
         //maybe not needed
+    }
+
+    void CreateLets(GameObject inputStep)
+    {
+        //createStaticLet
+        StepController stepController = inputStep.GetComponent<StepController>();
+        stepController.ClearLets();
+        stepController.AddLetStatic((float)Random.Range(-200, 200), lets[0]);
     }
 
     public void JumpButtonUp()
