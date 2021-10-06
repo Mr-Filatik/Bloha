@@ -28,22 +28,31 @@ public class MenuController : MonoBehaviour
 
     private int playerHealth = 3;
     private int playerStep = 3;
+    private int playerPosition = 0;
     [SerializeField] private AnimationCurve playerAnimationCurveY;
     [SerializeField] private AnimationCurve playerAnimationCurveX;
+    [SerializeField] private AnimationCurve playerAnimationCurveS;
 
     //private float startPosition = 0f;
     //GameObject spawnedObject;
     //GameObject[] spawnedObjects;
     GameObject player; // объект игрока, для вызова анимаций и т.п.
-    Vector3 jumpCoordinate = Vector3.zero; //
-    Vector3 fromCoordinate = Vector3.zero;
+    //Vector3 jumpCoordinate = Vector3.zero; //
+    //Vector3 fromCoordinate = Vector3.zero;
+    private bool isJump = false;
+    private Transform stepFrom = null;
+    private Transform stepTo = null;
+    //private GameObject stepFrom = null;
+    //private GameObject stepTo = null;
     //float jumpBorderAuto = 20;//?
 
     private float cooldownForJumpButton = 1f;
     private float timeForButton;
 
-    private float currentTime;
-    private float distance = 0;
+    private float animationTime = 1f;
+    private float currentTime = 0f;
+    private float distance = 0f;
+    private float difference = 0f;
 
     //Vector3 fromPosition;
     //Vector3 toPosition;
@@ -75,8 +84,8 @@ public class MenuController : MonoBehaviour
         }
 
         //needs changes
-        player.transform.localPosition = new Vector3(steps[playerStep].transform.localPosition.x, steps[playerStep].transform.localPosition.y + 40, steps[playerStep].transform.localPosition.z);
-        player.transform.localScale = new Vector3(steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.y, steps[playerStep].transform.localScale.z);
+        PlayerMovement();
+
         /*for (int i = 0; i < map.GetLength(0); i++)
         {
             for (int j = 0; j < map.GetLength(1); j++)
@@ -107,10 +116,10 @@ public class MenuController : MonoBehaviour
             //authomatic jump 
             if (playerStep <= 2)
             {
-                AutomaticJump();
+                AutomaticJump(1);
             }
 
-            if (jumpCoordinate != Vector3.zero)
+            if (isJump)
             {
                 Jump();
             }
@@ -164,43 +173,33 @@ public class MenuController : MonoBehaviour
         //createStaticLet
         StepController stepController = inputStep.GetComponent<StepController>();
         stepController.ClearLets();
-        stepController.AddLetStatic((float)Random.Range(-200, 200), lets[2]);
+        stepController.AddLetStatic((float)Random.Range(-200, 200), lets[0]);
     }
 
-    public void AutomaticJump()
+    public void AutomaticJump(int numberOfStep)
     {
-        playerStep++;
-        distance = jumpCoordinate.y - player.transform.localPosition.y;
-        jumpCoordinate = new Vector3(steps[playerStep].transform.localPosition.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f + 10, steps[playerStep].transform.localPosition.z * 0.8f);
-        fromCoordinate = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y, player.transform.localPosition.x);
-        // нужно ли умножать и сделать доход до этой координаты + возвращщение к текущей этой ступени
+        currentTime = 0f;
+        isJump = true;
+        stepFrom = steps[playerStep].transform;
+        playerStep += numberOfStep;
+        stepTo = steps[playerStep].transform;
     }
 
     public void Jump()
     {
-        /*if (distance == 0f)
+        if (currentTime <= animationTime)
         {
-            distance = jumpCoordinate.y - player.transform.localPosition.y;
-        }*/
-        if (player.transform.localPosition.y < jumpCoordinate.y)
-        {
-            //player.transform.localPosition = Vector3.MoveTowards(player.transform.localPosition, jumpCoordinate, 1);
-            player.transform.localPosition = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.x);
-
+            distance = (stepTo.localPosition.y - stepFrom.localPosition.y) * 0.8f;
+            difference = (stepFrom.localScale.x - stepTo.localScale.x) * 1f;
+            player.transform.localPosition = new Vector3(player.transform.localPosition.x, stepFrom.localPosition.y * 0.8f + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.z);
+            player.transform.localScale = new Vector3(stepFrom.localScale.x - playerAnimationCurveS.Evaluate(currentTime) * difference, stepFrom.localScale.y - playerAnimationCurveS.Evaluate(currentTime) * difference, stepTo.localScale.z);
             currentTime += Time.deltaTime;
         }
         else
         {
-            jumpCoordinate = new Vector3(steps[playerStep].transform.localPosition.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
-            if (player.transform.localPosition.y > jumpCoordinate.y)
-            {
-                player.transform.localPosition = Vector3.MoveTowards(player.transform.localPosition, jumpCoordinate, 1);
-            }
-            else
-            {
-                distance = 0f;
-                jumpCoordinate = Vector3.zero;
-            }
+            animationTime = 1f; //mb
+            currentTime = 0f;
+            isJump = false;
         }
     }
 
@@ -209,24 +208,19 @@ public class MenuController : MonoBehaviour
         //maybe you need to add fatigue after a long press
         if (Time.realtimeSinceStartup - timeForButton > cooldownForJumpButton)
         {
-            playerStep+=2;
-            //jump over a step
-            Debug.Log("Long jump");
+            if (!isJump)
+            {
+                animationTime = 2f; //mb
+                AutomaticJump(2);
+            }
         }
         else
         {
-            playerStep++;
-            //jump to the next step
-            Debug.Log("Short jump");
+            if (!isJump)
+            {
+                AutomaticJump(1);
+            }
         }
-        /*if (Time.realtimeSinceStartup - timeForButton > 2f)
-        {
-            Vector3 fromPosition = player.transform.localPosition;
-            Vector3 toPosition = new Vector3(fromPosition.x, fromPosition.y + 100, fromPosition.z);
-            player.transform.localPosition = Vector3.Lerp(fromPosition, toPosition, 1);
-
-            timeForButton = Time.realtimeSinceStartup;
-        }*/
     }
 
     public void JumpButtonDown()
