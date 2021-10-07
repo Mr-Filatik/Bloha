@@ -53,6 +53,7 @@ public class MenuController : MonoBehaviour
     private float interval = 0f;
     private float difference = 0f;
     private float direction = 0f;
+    private float directionCurrent = 0f;
     private float directionLimit = 45f;
     //Vector3 fromPosition;
     //Vector3 toPosition;
@@ -152,19 +153,42 @@ public class MenuController : MonoBehaviour
         //scale steps = 0.8f and scale player = 1f
         player.transform.localScale = new Vector3(steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.y, steps[playerStep].transform.localScale.z);
         //player.transform.localPosition = new Vector3(steps[playerStep].transform.localPosition.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
-        player.transform.localPosition = new Vector3(playerPosition * player.transform.localScale.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
+        if (playerPosition > -200 && playerPosition < 200)
+        {
+            player.transform.localPosition = new Vector3(playerPosition * player.transform.localScale.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
+        }
+        else
+        {
+            //падение
+        }
     }
 
     void DirectionMovement()
     {
-        direction += Random.Range(-2f, 2f);
-        if (direction < -directionLimit)
+        if (direction == directionCurrent)
         {
-            direction = -directionLimit;
+            directionCurrent = Random.Range(-directionLimit, directionLimit);
+            Debug.Log(directionCurrent);
         }
-        if (direction > directionLimit)
+        float d = directionCurrent - direction;
+        /*if (Mathf.Abs(d) < Time.deltaTime * speed * 5)
         {
-            direction = directionLimit;
+            direction = directionCurrent;
+        }*/
+        if (Mathf.Abs(d) < Time.deltaTime * speed * 10)
+        {
+            direction = directionCurrent;
+            d = 0;
+        }
+        if (d < 0)
+        {
+            //direction -= Time.deltaTime * speed * 5;
+            direction += Time.deltaTime * speed * d;
+        }
+        if (d > 0)
+        {
+            //direction += Time.deltaTime * speed * 5;
+            direction += Time.deltaTime * speed * d;
         }
         directionArrow.transform.localEulerAngles = new Vector3(0, 0, direction);
     }
@@ -184,9 +208,7 @@ public class MenuController : MonoBehaviour
         stepFrom = steps[playerStep].transform;
         playerStep += numberOfStep;
         stepTo = steps[playerStep].transform;
-
-        playerPositionNew = playerPosition - Mathf.Tan(10 * 0.0174533f) * (stepTo.localPosition.y - stepFrom.localPosition.y) * 0.8f; //
-        Debug.Log(playerPositionNew);
+        playerPositionNew = playerPosition - Mathf.Tan(direction * 0.0174533f) * (stepTo.localPosition.y - stepFrom.localPosition.y) * 0.8f;
     }
 
     public void Jump()
@@ -196,8 +218,7 @@ public class MenuController : MonoBehaviour
             distance = (stepTo.localPosition.y - stepFrom.localPosition.y) * 0.8f;
             difference = (stepFrom.localScale.x - stepTo.localScale.x) * 1f;
             interval = (playerPositionNew * stepTo.localScale.x - playerPosition * stepFrom.localScale.x) * 0.8f;
-            //update
-            player.transform.localPosition = new Vector3(playerPosition * 0.8f + playerAnimationCurveX.Evaluate(currentTime) * interval, stepFrom.localPosition.y * 0.8f + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.z);
+            player.transform.localPosition = new Vector3(playerPosition * 0.8f * stepFrom.localScale.x + playerAnimationCurveX.Evaluate(currentTime) * interval, stepFrom.localPosition.y * 0.8f + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.z);
             player.transform.localScale = new Vector3(stepFrom.localScale.x - playerAnimationCurveS.Evaluate(currentTime) * difference, stepFrom.localScale.y - playerAnimationCurveS.Evaluate(currentTime) * difference, stepTo.localScale.z);
             currentTime += Time.deltaTime;
         }
