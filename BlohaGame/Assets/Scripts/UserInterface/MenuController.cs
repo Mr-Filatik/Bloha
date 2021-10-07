@@ -16,6 +16,8 @@ public class MenuController : MonoBehaviour
 
     public GameObject[] steps = null;
 
+    public GameObject directionArrow = null;
+
     public GameObject[] lets = null;
     #endregion
 
@@ -24,11 +26,11 @@ public class MenuController : MonoBehaviour
 
     [SerializeField] private float speed;
     [SerializeField] private float speedDefault = 2f;
-    //private int[,] map = new int[12, 3];
 
     private int playerHealth = 3;
     private int playerStep = 3;
-    private int playerPosition = 0;
+    [SerializeField] private float playerPosition = 0;
+    [SerializeField] private float playerPositionNew = 0;
     [SerializeField] private AnimationCurve playerAnimationCurveY;
     [SerializeField] private AnimationCurve playerAnimationCurveX;
     [SerializeField] private AnimationCurve playerAnimationCurveS;
@@ -37,14 +39,10 @@ public class MenuController : MonoBehaviour
     //GameObject spawnedObject;
     //GameObject[] spawnedObjects;
     GameObject player; // объект игрока, для вызова анимаций и т.п.
-    //Vector3 jumpCoordinate = Vector3.zero; //
-    //Vector3 fromCoordinate = Vector3.zero;
     private bool isJump = false;
     private Transform stepFrom = null;
     private Transform stepTo = null;
-    //private GameObject stepFrom = null;
-    //private GameObject stepTo = null;
-    //float jumpBorderAuto = 20;//?
+    private float directionJump = 0f; //
 
     private float cooldownForJumpButton = 1f;
     private float timeForButton;
@@ -52,8 +50,10 @@ public class MenuController : MonoBehaviour
     private float animationTime = 1f;
     private float currentTime = 0f;
     private float distance = 0f;
+    private float interval = 0f;
     private float difference = 0f;
-
+    private float direction = 0f;
+    private float directionLimit = 45f;
     //Vector3 fromPosition;
     //Vector3 toPosition;
     //int direction = 0;
@@ -85,24 +85,11 @@ public class MenuController : MonoBehaviour
 
         //needs changes
         PlayerMovement();
-
-        /*for (int i = 0; i < map.GetLength(0); i++)
-        {
-            for (int j = 0; j < map.GetLength(1); j++)
-            {
-                map[i, j] = 0;
-            }
-        }*/
     }
 
     void Start()
     {
-        /*playerStep = 1;
-
         
-        coordinates = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y - Time.deltaTime * 10 * speed, player.transform.localPosition.z);
-
-        player.transform.localPosition = coordinates;*/
     }
 
     void Update()
@@ -110,6 +97,8 @@ public class MenuController : MonoBehaviour
         if (game)
         {
             speed = speedDefault;// + Time.deltaTime * 10 * playerStep * steps[0].transform.position.y / 100; //исправить
+
+            DirectionMovement();
 
             LadderMovement();
 
@@ -137,7 +126,6 @@ public class MenuController : MonoBehaviour
             steps[i].transform.localScale = new Vector3((float)(100 - i * 2 + (-steps[0].transform.localPosition.y * 2) / 100) / 100, (float)(100 - i * 2 + (-steps[0].transform.localPosition.y * 2) / 100) / 100, 1);
             steps[i].transform.localPosition = new Vector3(steps[i].transform.localPosition.x, steps[i].transform.localPosition.y - Time.deltaTime * 10 * speed * steps[i].transform.localScale.x, steps[i].transform.localPosition.z);
         }
-
         if (steps[1].transform.localScale.y >= 1)
         {
             GameObject none = steps[0];
@@ -148,11 +136,9 @@ public class MenuController : MonoBehaviour
             steps[steps.GetLength(0) - 1] = none;
             steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, steps[steps.GetLength(0) - 2].transform.localPosition.y + 108 * (steps[steps.GetLength(0) - 2].transform.localScale.x - 0.02f), 0);
             steps[steps.GetLength(0) - 1].transform.SetSiblingIndex(0);
-
-            CreateLets(steps[steps.GetLength(0) - 1]);
-
-            //продолжить
             playerStep--;
+            //calling the obstacle generating method
+            CreateLets(steps[steps.GetLength(0) - 1]);
         }
     }
 
@@ -164,8 +150,23 @@ public class MenuController : MonoBehaviour
     void PlayerMovement()
     {
         //scale steps = 0.8f and scale player = 1f
-        player.transform.localPosition = new Vector3(steps[playerStep].transform.localPosition.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
         player.transform.localScale = new Vector3(steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.y, steps[playerStep].transform.localScale.z);
+        //player.transform.localPosition = new Vector3(steps[playerStep].transform.localPosition.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
+        player.transform.localPosition = new Vector3(playerPosition * player.transform.localScale.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
+    }
+
+    void DirectionMovement()
+    {
+        direction += Random.Range(-2f, 2f);
+        if (direction < -directionLimit)
+        {
+            direction = -directionLimit;
+        }
+        if (direction > directionLimit)
+        {
+            direction = directionLimit;
+        }
+        directionArrow.transform.localEulerAngles = new Vector3(0, 0, direction);
     }
 
     void CreateLets(GameObject inputStep)
@@ -183,6 +184,9 @@ public class MenuController : MonoBehaviour
         stepFrom = steps[playerStep].transform;
         playerStep += numberOfStep;
         stepTo = steps[playerStep].transform;
+
+        playerPositionNew = playerPosition - Mathf.Tan(10 * 0.0174533f) * (stepTo.localPosition.y - stepFrom.localPosition.y) * 0.8f; //
+        Debug.Log(playerPositionNew);
     }
 
     public void Jump()
@@ -191,12 +195,15 @@ public class MenuController : MonoBehaviour
         {
             distance = (stepTo.localPosition.y - stepFrom.localPosition.y) * 0.8f;
             difference = (stepFrom.localScale.x - stepTo.localScale.x) * 1f;
-            player.transform.localPosition = new Vector3(player.transform.localPosition.x, stepFrom.localPosition.y * 0.8f + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.z);
+            interval = (playerPositionNew * stepTo.localScale.x - playerPosition * stepFrom.localScale.x) * 0.8f;
+            //update
+            player.transform.localPosition = new Vector3(playerPosition * 0.8f + playerAnimationCurveX.Evaluate(currentTime) * interval, stepFrom.localPosition.y * 0.8f + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.z);
             player.transform.localScale = new Vector3(stepFrom.localScale.x - playerAnimationCurveS.Evaluate(currentTime) * difference, stepFrom.localScale.y - playerAnimationCurveS.Evaluate(currentTime) * difference, stepTo.localScale.z);
             currentTime += Time.deltaTime;
         }
         else
         {
+            playerPosition = playerPositionNew;
             animationTime = 1f; //mb
             currentTime = 0f;
             isJump = false;
