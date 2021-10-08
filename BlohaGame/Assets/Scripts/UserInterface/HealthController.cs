@@ -50,6 +50,13 @@ public class HealthController : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        health = 0;
+        healths = null;
+        currentTime = 0f;
+    }
+
     private void ChangeHealth()
     {
         if (healths != null)
