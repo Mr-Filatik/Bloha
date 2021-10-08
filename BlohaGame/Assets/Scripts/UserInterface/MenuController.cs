@@ -18,6 +18,8 @@ public class MenuController : MonoBehaviour
 
     public GameObject directionArrow = null;
 
+    public GameObject health = null;
+
     public GameObject[] lets = null;
     #endregion
 
@@ -25,7 +27,7 @@ public class MenuController : MonoBehaviour
     private bool game = false;
 
     [SerializeField] private float speed;
-    [SerializeField] private float speedDefault = 2f;
+    [SerializeField] private float speedDefault = 4f;
 
     private int playerHealth = 3;
     private int playerStep = 3;
@@ -35,9 +37,6 @@ public class MenuController : MonoBehaviour
     [SerializeField] private AnimationCurve playerAnimationCurveX;
     [SerializeField] private AnimationCurve playerAnimationCurveS;
 
-    //private float startPosition = 0f;
-    //GameObject spawnedObject;
-    //GameObject[] spawnedObjects;
     GameObject player; // объект игрока, для вызова анимаций и т.п.
     private bool isJump = false;
     private Transform stepFrom = null;
@@ -55,10 +54,7 @@ public class MenuController : MonoBehaviour
     private float direction = 0f;
     private float directionCurrent = 0f;
     private float directionLimit = 45f;
-    //Vector3 fromPosition;
-    //Vector3 toPosition;
-    //int direction = 0;
-    //float timeForDirection = 0;
+
     #endregion
 
     void Awake()
@@ -103,7 +99,6 @@ public class MenuController : MonoBehaviour
 
             LadderMovement();
 
-            //authomatic jump 
             if (playerStep <= 2)
             {
                 AutomaticJump(1);
@@ -117,7 +112,18 @@ public class MenuController : MonoBehaviour
             {
                 PlayerMovement();
             }
+            //Debug.Log(playerPosition);
         }
+    }
+
+    void StartGame()
+    {
+        game = true;
+        gameJumpButton.SetActive(true);
+        gamePauseButton.SetActive(true);
+
+        playerPosition = 0;
+        health.GetComponent<HealthController>().SetHealth(3);
     }
 
     void LadderMovement()
@@ -152,13 +158,15 @@ public class MenuController : MonoBehaviour
     {
         //scale steps = 0.8f and scale player = 1f
         player.transform.localScale = new Vector3(steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.y, steps[playerStep].transform.localScale.z);
-        //player.transform.localPosition = new Vector3(steps[playerStep].transform.localPosition.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
         if (playerPosition > -200 && playerPosition < 200)
         {
             player.transform.localPosition = new Vector3(playerPosition * player.transform.localScale.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
         }
         else
         {
+            health.GetComponent<HealthController>().MinusHealth();
+            playerPosition = 0;
+            PlayerDead();
             //падение
         }
     }
@@ -171,24 +179,25 @@ public class MenuController : MonoBehaviour
             Debug.Log(directionCurrent);
         }
         float d = directionCurrent - direction;
-        /*if (Mathf.Abs(d) < Time.deltaTime * speed * 5)
-        {
-            direction = directionCurrent;
-        }*/
-        if (Mathf.Abs(d) < Time.deltaTime * speed * 10)
+        if (Mathf.Abs(d) < Time.deltaTime * speed * 20)
         {
             direction = directionCurrent;
             d = 0;
         }
+        /*if (Mathf.Abs(d) < Time.deltaTime * speed * 10)
+        {
+            direction = directionCurrent;
+            d = 0;
+        }*/
         if (d < 0)
         {
-            //direction -= Time.deltaTime * speed * 5;
-            direction += Time.deltaTime * speed * d;
+            direction -= Time.deltaTime * speed * 20;
+            //direction += Time.deltaTime * speed * d;
         }
         if (d > 0)
         {
-            //direction += Time.deltaTime * speed * 5;
-            direction += Time.deltaTime * speed * d;
+            direction += Time.deltaTime * speed * 20;
+            //direction += Time.deltaTime * speed * d;
         }
         directionArrow.transform.localEulerAngles = new Vector3(0, 0, direction);
     }
@@ -231,6 +240,18 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    void PlayerDead()
+    {
+        if (playerHealth > 0) //or 1
+        {
+            health.GetComponent<HealthController>().MinusHealth();
+        }
+        else
+        {
+            //call chance panel
+        }
+    }
+    
     public void JumpButtonUp()
     {
         //maybe you need to add fatigue after a long press
@@ -260,9 +281,7 @@ public class MenuController : MonoBehaviour
     {
         menuPanel.SetActive(false);
         gamePanel.SetActive(true);
-
         LadderMovement();
-
         StartCoroutine(startWaiter());
     }
 
@@ -281,29 +300,7 @@ public class MenuController : MonoBehaviour
         yield return new WaitForSecondsRealtime(1);
         gameStart[3].SetActive(false);
 
-        game = true;
-        gameJumpButton.SetActive(true);
-        gamePauseButton.SetActive(true);
-        /*for (int i = 0; i < gameStart.Length; i++)
-        {
-            for (int j = 0; j < gameStart.Length; j++)
-            {
-                if (i == j)
-                {
-                    gameStart[i].SetActive(true);
-                }
-                else
-                {
-                    gameStart[i].SetActive(false);
-                }
-            }
-            yield return new WaitForSecondsRealtime(1);
-        }
-        for (int i = 0; i < gameStart.Length; i++)
-        {
-            gameStart[i].SetActive(false);
-        }
-        yield return new WaitForSecondsRealtime(0);*/
+        StartGame();
     }
 
     public void PauseButton()
@@ -314,12 +311,30 @@ public class MenuController : MonoBehaviour
     public void MenuButton()
     {
         menuPanel.SetActive(true);
-
         game = false;
         gameJumpButton.SetActive(false);
         gamePauseButton.SetActive(false);
-
         gamePanel.SetActive(false);
+    }
+
+    public void ChanceButton()
+    {
+
+    }
+
+    public void AdvertisingButton()
+    {
+
+    }
+
+    public void RecoveryButton()
+    {
+
+    }
+
+    public void RestartButton()
+    {
+
     }
 
     public void ShopButton()
