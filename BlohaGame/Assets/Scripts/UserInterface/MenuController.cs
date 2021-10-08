@@ -5,6 +5,13 @@ using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
+    [SerializeField] private GameObject chancePanel = null;
+    [SerializeField] private GameObject losingPanel = null;
+    [SerializeField] private GameObject pausePanel = null;
+    [SerializeField] private GameObject settingsPanel = null;
+    [SerializeField] private AnimationCurve panelAnimationCurvePosition;
+    private float currentTimeForPanel = 0f;
+
     #region Field
     public GameObject menuPanel = null;
     public GameObject gamePanel = null;
@@ -63,6 +70,7 @@ public class MenuController : MonoBehaviour
 
         menuPanel.SetActive(true);
         gamePanel.SetActive(false);
+        chancePanel.SetActive(false);
 
         gameJumpButton.SetActive(false);
         gamePauseButton.SetActive(false);
@@ -89,6 +97,18 @@ public class MenuController : MonoBehaviour
         
     }
 
+    private bool chancePanelOpen = false;
+    private bool chancePanelClose = false;
+    private bool losingPanelOpen = false;
+    private bool losingPanelClose = false;
+    private bool pausePanelOpen = false;
+    private bool pausePanelClose = false;
+
+    private bool toMenuButton = false;
+    private bool toRestartButton = false;
+    private bool toPauseButton = false;
+    private bool toContinueButton = false;
+
     void Update()
     {
         if (game)
@@ -112,7 +132,87 @@ public class MenuController : MonoBehaviour
             {
                 PlayerMovement();
             }
-            //Debug.Log(playerPosition);
+        }
+
+        if (losingPanelOpen)
+        {
+            if (currentTimeForPanel >= panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time)
+            {
+                LosingPanelOpen();
+                currentTimeForPanel = 0f;
+            }
+            else
+            {
+                losingPanel.transform.localPosition = new Vector3(0f, -1200f + 1200f * panelAnimationCurvePosition.Evaluate(currentTimeForPanel));
+                currentTimeForPanel += Time.deltaTime;
+            }
+        }
+        if (losingPanelClose)
+        {
+            if (currentTimeForPanel <= 0)
+            {
+                LosingPanelClose();
+                currentTimeForPanel = 0f;
+            }
+            else
+            {
+                losingPanel.transform.localPosition = new Vector3(0f, -1200f + 1200f * panelAnimationCurvePosition.Evaluate(currentTimeForPanel));
+                currentTimeForPanel -= Time.deltaTime;
+            }
+        }
+
+        if (chancePanelOpen)
+        {
+            if (currentTimeForPanel >= panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time)
+            {
+                ChancePanelOpen();
+                currentTimeForPanel = 0f;
+            }
+            else
+            {
+                chancePanel.transform.localPosition = new Vector3(0f, -1200f + 1200f * panelAnimationCurvePosition.Evaluate(currentTimeForPanel));
+                currentTimeForPanel += Time.deltaTime;
+            }
+        }
+        if (chancePanelClose)
+        {
+            if (currentTimeForPanel <= 0)
+            {
+                ChancePanelClose();
+                currentTimeForPanel = 0f;
+            }
+            else
+            {
+                chancePanel.transform.localPosition = new Vector3(0f, -1200f + 1200f * panelAnimationCurvePosition.Evaluate(currentTimeForPanel));
+                currentTimeForPanel -= Time.deltaTime;
+            }
+        }
+
+        if (pausePanelOpen)
+        {
+            if (currentTimeForPanel >= panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time)
+            {
+                PausePanelOpen();
+                currentTimeForPanel = 0f;
+            }
+            else
+            {
+                pausePanel.transform.localPosition = new Vector3(0f, -1200f + 1200f * panelAnimationCurvePosition.Evaluate(currentTimeForPanel));
+                currentTimeForPanel += Time.deltaTime;
+            }
+        }
+        if (pausePanelClose)
+        {
+            if (currentTimeForPanel <= 0)
+            {
+                PausePanelClose();
+                currentTimeForPanel = 0f;
+            }
+            else
+            {
+                pausePanel.transform.localPosition = new Vector3(0f, -1200f + 1200f * panelAnimationCurvePosition.Evaluate(currentTimeForPanel));
+                currentTimeForPanel -= Time.deltaTime;
+            }
         }
     }
 
@@ -176,7 +276,6 @@ public class MenuController : MonoBehaviour
         if (direction == directionCurrent)
         {
             directionCurrent = Random.Range(-directionLimit, directionLimit);
-            Debug.Log(directionCurrent);
         }
         float d = directionCurrent - direction;
         if (Mathf.Abs(d) < Time.deltaTime * speed * 20)
@@ -277,13 +376,85 @@ public class MenuController : MonoBehaviour
         timeForButton = Time.realtimeSinceStartup;
     }
 
+    //push buttons
+
+    public void MenuButton()
+    {
+        if (toMenuButton)
+        {
+            toMenuButton = false;
+
+            menuPanel.SetActive(true);
+            game = false;
+            gameJumpButton.SetActive(false);
+            gamePauseButton.SetActive(false);
+            gamePanel.SetActive(false);
+        }
+        else
+        {
+            toMenuButton = true;
+            if (losingPanel.activeSelf)
+            {
+                LosingPanelClose();
+            }
+            //pausemenu
+        }
+    }
+
+    public void RestartButton()
+    {
+        if (toRestartButton)
+        {
+            toRestartButton = false;
+        }
+        else
+        {
+            toRestartButton = true;
+            LosingPanelClose();
+        }
+    }
+
+    public void PauseButton()
+    {
+        if (toPauseButton)
+        {
+            toPauseButton = false;
+        }
+        else
+        {
+            toPauseButton = true;
+            speedDefault = 0f; //pause method ++
+            PausePanelOpen();
+        }
+    }//pause method ++
+
+    public void ContinueButton()
+    {
+        if (toContinueButton)
+        {
+            toContinueButton = false;
+            speedDefault = 2f; //start method ++
+        }
+        else
+        {
+            toContinueButton = true;
+            PausePanelClose();
+        }
+    }//start method ++
+
+    public void SettingButton()
+    {
+        
+    }
+
     public void PlayButton()
     {
         menuPanel.SetActive(false);
         gamePanel.SetActive(true);
+
         LadderMovement();
         StartCoroutine(startWaiter());
-    }
+    }//needs changes
 
     IEnumerator startWaiter()
     {
@@ -301,26 +472,116 @@ public class MenuController : MonoBehaviour
         gameStart[3].SetActive(false);
 
         StartGame();
-    }
 
-    public void PauseButton()
+        ChancePanelOpen();
+    }//needs removed
+
+    //open and close panels
+
+    public void ChancePanelOpen()
     {
-        MenuButton();
+        if (chancePanelOpen)
+        {
+            chancePanelOpen = false;
+            chancePanel.GetComponent<ChancePanel>().StartWork();
+        }
+        else
+        {
+            chancePanelOpen = true;
+            chancePanel.SetActive(true);
+            currentTimeForPanel = 0f;
+        }
     }
 
-    public void MenuButton()
+    public void ChancePanelClose()
     {
-        menuPanel.SetActive(true);
-        game = false;
-        gameJumpButton.SetActive(false);
-        gamePauseButton.SetActive(false);
-        gamePanel.SetActive(false);
+        if (chancePanelClose)
+        {
+            chancePanelClose = false;
+            chancePanel.SetActive(false);
+            LosingPanelOpen();
+        }
+        else
+        {
+            chancePanelClose = true;
+            currentTimeForPanel = panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time;
+        }
     }
 
-    public void ChanceButton()
+    public void LosingPanelOpen()
     {
-
+        if (losingPanelOpen)
+        {
+            losingPanelOpen = false;
+        }
+        else
+        {
+            losingPanelOpen = true;
+            losingPanel.SetActive(true);
+            currentTimeForPanel = 0f;
+        }
     }
+
+    public void LosingPanelClose()
+    {
+        if (losingPanelClose)
+        {
+            losingPanelClose = false;
+            losingPanel.SetActive(false);
+            if (toMenuButton)
+            {
+                MenuButton();
+            }
+            if (toRestartButton)
+            {
+                RestartButton();
+            }
+        }
+        else
+        {
+            losingPanelClose = true;
+            currentTimeForPanel = panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time;
+        }
+    }
+
+    public void PausePanelOpen()
+    {
+        if (pausePanelOpen)
+        {
+            pausePanelOpen = false;
+            if (toPauseButton)
+            {
+                PauseButton();
+            }
+        }
+        else
+        {
+            pausePanelOpen = true;
+            pausePanel.SetActive(true);
+            currentTimeForPanel = 0f;
+        }
+    }
+
+    public void PausePanelClose()
+    {
+        if (pausePanelClose)
+        {
+            pausePanelClose = false;
+            pausePanel.SetActive(false);
+            if (toContinueButton)
+            {
+                ContinueButton();
+            }
+        }
+        else
+        {
+            pausePanelClose = true;
+            currentTimeForPanel = panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time;
+        }
+    }
+
+
+
 
     public void AdvertisingButton()
     {
@@ -332,19 +593,9 @@ public class MenuController : MonoBehaviour
 
     }
 
-    public void RestartButton()
-    {
-
-    }
-
     public void ShopButton()
     {
         Debug.Log("Shop");
-    }
-
-    public void SettingButton()
-    {
-        Debug.Log("Setting");
     }
 
     public void ExitButton()
