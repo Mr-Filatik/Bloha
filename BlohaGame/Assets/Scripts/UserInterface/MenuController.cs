@@ -48,7 +48,7 @@ public class MenuController : MonoBehaviour
     private bool isJump = false;
     private Transform stepFrom = null;
     private Transform stepTo = null;
-    private float directionJump = 0f; //
+    //private float directionJump = 0f; //
 
     private float cooldownForJumpButton = 1f;
     private float timeForButton;
@@ -97,17 +97,22 @@ public class MenuController : MonoBehaviour
         
     }
 
+    private bool isPause = false;
+
     private bool chancePanelOpen = false;
     private bool chancePanelClose = false;
     private bool losingPanelOpen = false;
     private bool losingPanelClose = false;
     private bool pausePanelOpen = false;
     private bool pausePanelClose = false;
+    private bool settingsPanelOpen = false;
+    private bool settingsPanelClose = false;
 
     private bool toMenuButton = false;
     private bool toRestartButton = false;
     private bool toPauseButton = false;
     private bool toContinueButton = false;
+    private bool toSettingsButton = false;
 
     void Update()
     {
@@ -214,16 +219,33 @@ public class MenuController : MonoBehaviour
                 currentTimeForPanel -= Time.deltaTime;
             }
         }
-    }
 
-    void StartGame()
-    {
-        game = true;
-        gameJumpButton.SetActive(true);
-        gamePauseButton.SetActive(true);
-
-        playerPosition = 0;
-        health.GetComponent<HealthController>().SetHealth(3);
+        if (settingsPanelOpen)
+        {
+            if (currentTimeForPanel >= panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time)
+            {
+                SettingsPanelOpen();
+                currentTimeForPanel = 0f;
+            }
+            else
+            {
+                settingsPanel.transform.localPosition = new Vector3(0f, -1200f + 1200f * panelAnimationCurvePosition.Evaluate(currentTimeForPanel));
+                currentTimeForPanel += Time.deltaTime;
+            }
+        }
+        if (settingsPanelClose)
+        {
+            if (currentTimeForPanel <= 0)
+            {
+                SettingsPanelClose();
+                currentTimeForPanel = 0f;
+            }
+            else
+            {
+                settingsPanel.transform.localPosition = new Vector3(0f, -1200f + 1200f * panelAnimationCurvePosition.Evaluate(currentTimeForPanel));
+                currentTimeForPanel -= Time.deltaTime;
+            }
+        }
     }
 
     void LadderMovement()
@@ -376,6 +398,35 @@ public class MenuController : MonoBehaviour
         timeForButton = Time.realtimeSinceStartup;
     }
 
+    //game methods
+
+    private void StartGame()
+    {
+        game = true;
+        gameJumpButton.SetActive(true);
+        gamePauseButton.SetActive(true);
+
+        playerPosition = 0;
+        health.GetComponent<HealthController>().SetHealth(3);
+    }
+
+    private void ContinueGame()
+    {
+        speedDefault = 2f;
+        isPause = false;
+    }
+
+    private void PauseGame()
+    {
+        speedDefault = 0f; 
+        isPause = true;
+    }
+
+    private void EndGame()
+    {
+
+    }
+
     //push buttons
 
     public void MenuButton()
@@ -397,8 +448,17 @@ public class MenuController : MonoBehaviour
             {
                 LosingPanelClose();
             }
+            if (pausePanel.activeSelf)
+            {
+                PausePanelClose();
+            }
             //pausemenu
         }
+    }
+
+    public void ChanceButton()
+    {
+        ChancePanelClose();
     }
 
     public void RestartButton()
@@ -423,28 +483,51 @@ public class MenuController : MonoBehaviour
         else
         {
             toPauseButton = true;
-            speedDefault = 0f; //pause method ++
-            PausePanelOpen();
+            PauseGame();
+            if (settingsPanel.activeSelf)
+            {
+                SettingsPanelClose();
+            }
+            else
+            {
+                PausePanelOpen();
+            }
         }
-    }//pause method ++
+    }
 
     public void ContinueButton()
     {
         if (toContinueButton)
         {
             toContinueButton = false;
-            speedDefault = 2f; //start method ++
+            ContinueGame();
         }
         else
         {
             toContinueButton = true;
-            PausePanelClose();
+            if (pausePanel.activeSelf)
+            {
+                PausePanelClose();
+            }
         }
-    }//start method ++
+    }
 
-    public void SettingButton()
+    public void SettingsButton()
     {
-        
+        if (toSettingsButton)
+        {
+            toSettingsButton = false;
+            //SettingsPanelOpen();
+        }
+        else
+        {
+            toSettingsButton = true;
+            if (pausePanel.activeSelf)
+            {
+                PausePanelClose();
+            }
+            //mainmenu
+        }
     }
 
     public void PlayButton()
@@ -478,7 +561,7 @@ public class MenuController : MonoBehaviour
 
     //open and close panels
 
-    public void ChancePanelOpen()
+    private void ChancePanelOpen()
     {
         if (chancePanelOpen)
         {
@@ -493,7 +576,7 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void ChancePanelClose()
+    private void ChancePanelClose()
     {
         if (chancePanelClose)
         {
@@ -508,7 +591,7 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void LosingPanelOpen()
+    private void LosingPanelOpen()
     {
         if (losingPanelOpen)
         {
@@ -522,7 +605,7 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void LosingPanelClose()
+    private void LosingPanelClose()
     {
         if (losingPanelClose)
         {
@@ -544,14 +627,14 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void PausePanelOpen()
+    private void PausePanelOpen()
     {
         if (pausePanelOpen)
         {
             pausePanelOpen = false;
             if (toPauseButton)
             {
-                PauseButton();
+                PauseButton();//mb refactor
             }
         }
         else
@@ -562,7 +645,7 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void PausePanelClose()
+    private void PausePanelClose()
     {
         if (pausePanelClose)
         {
@@ -572,6 +655,14 @@ public class MenuController : MonoBehaviour
             {
                 ContinueButton();
             }
+            if (toSettingsButton)
+            {
+                SettingsPanelOpen();
+            }
+            if (toMenuButton)
+            {
+                MenuButton();
+            }
         }
         else
         {
@@ -579,6 +670,44 @@ public class MenuController : MonoBehaviour
             currentTimeForPanel = panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time;
         }
     }
+
+    private void SettingsPanelOpen()
+    {
+        if (settingsPanelOpen)
+        {
+            settingsPanelOpen = false;
+            if (toSettingsButton)
+            {
+                SettingsButton();
+            }
+        }
+        else
+        {
+            settingsPanelOpen = true;
+            settingsPanel.SetActive(true);
+            currentTimeForPanel = 0f;
+        }
+    }
+
+    private void SettingsPanelClose()
+    {
+        if (settingsPanelClose)
+        {
+            settingsPanelClose = false;
+            settingsPanel.SetActive(false);
+            if (toPauseButton)
+            {
+                PausePanelOpen();
+            }
+            //PauseButton();
+        }
+        else
+        {
+            settingsPanelClose = true;
+            currentTimeForPanel = panelAnimationCurvePosition.keys[panelAnimationCurvePosition.keys.Length - 1].time;
+        }
+    }
+
 
 
 

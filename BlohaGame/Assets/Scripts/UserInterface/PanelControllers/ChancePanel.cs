@@ -43,12 +43,11 @@ public class ChancePanel : MonoBehaviour
             else
             {
                 isWork = false;
-                menuController.ChancePanelClose();
+                menuController.ChanceButton();
             }
         }
     }
 
-    //needlessly
     private void OnDisable()
     {
         timeLine.transform.localScale = new Vector3(1, 1, 1);

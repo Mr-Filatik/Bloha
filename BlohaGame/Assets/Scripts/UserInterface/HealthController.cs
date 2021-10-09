@@ -14,6 +14,37 @@ public class HealthController : MonoBehaviour
     private float currentTime = 0f;
     private float distanceSpawn = 50f;
 
+    public void SetHealth(int inputHealth)
+    {
+        if (inputHealth > healthNumber)
+        {
+            health = healthNumber;
+        }
+        else
+        {
+            health = inputHealth;
+        }
+        ChangeHealth();
+    }
+
+    public void MinusHealth()
+    {
+        if (health > 0)
+        {
+            health--;
+            ChangeHealth();
+        }
+    }
+
+    public void PlusHealth()
+    {
+        if (health < healthNumber)
+        {
+            health++;
+            ChangeHealth();
+        }
+    }
+
     //change spawn coordinates here
     private void OnEnable()
     {
@@ -72,37 +103,6 @@ public class HealthController : MonoBehaviour
                     healths[i].SetActive(false);
                 }
             }
-        }
-    }
-
-    public void SetHealth(int inputHealth)
-    {
-        if (inputHealth > healthNumber)
-        {
-            health = healthNumber;
-        }
-        else
-        {
-            health = inputHealth;
-        }
-        ChangeHealth();
-    }
-
-    public void MinusHealth()
-    {
-        if (health > 0)
-        {
-            health--;
-            ChangeHealth();
-        }
-    }
-
-    public void PlusHealth()
-    {
-        if (health < healthNumber)
-        {
-            health++;
-            ChangeHealth();
         }
     }
 }
