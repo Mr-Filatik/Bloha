@@ -4512,22 +4512,22 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.87281793
     - serializedVersion: 3
-      time: 0.29575905
-      value: 0.30616203
-      inSlope: 1.6665853
-      outSlope: 1.6665853
+      time: 0.13325904
+      value: 0.3110337
+      inSlope: 3.052542
+      outSlope: 3.052542
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.09828047
+      outWeight: 0.095392145
     - serializedVersion: 3
-      time: 1
+      time: 0.6
       value: 1
-      inSlope: -0.6856719
-      outSlope: -0.6856719
+      inSlope: -1.2097154
+      outSlope: -1.2097154
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.14164278
+      inWeight: 0.1644124
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -4561,7 +4561,7 @@ MonoBehaviour:
   - {fileID: 4794412299735458687, guid: 873adfb37709a4147b7be6f254e4048b, type: 3}
   - {fileID: 8395957032838996822, guid: 1c8fb256eb2601f4d924cb380912e673, type: 3}
   speed: 0
-  speedDefault: 4
+  speedDefault: 6
   playerPosition: 0
   playerPositionNew: 0
   playerAnimationCurveY:

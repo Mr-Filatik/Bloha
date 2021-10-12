@@ -71,6 +71,7 @@ public class MenuController : MonoBehaviour
         menuPanel.SetActive(true);
         gamePanel.SetActive(false);
         chancePanel.SetActive(false);
+        settingsPanel.SetActive(false);
 
         gameJumpButton.SetActive(false);
         gamePauseButton.SetActive(false);
@@ -116,7 +117,7 @@ public class MenuController : MonoBehaviour
 
     void Update()
     {
-        if (game)
+        if (game && !isPause)
         {
             speed = speedDefault;// + Time.deltaTime * 10 * playerStep * steps[0].transform.position.y / 100; //исправить
 
@@ -403,8 +404,7 @@ public class MenuController : MonoBehaviour
     private void StartGame()
     {
         game = true;
-        gameJumpButton.SetActive(true);
-        gamePauseButton.SetActive(true);
+        isPause = true;
 
         playerPosition = 0;
         health.GetComponent<HealthController>().SetHealth(3);
@@ -412,19 +412,25 @@ public class MenuController : MonoBehaviour
 
     private void ContinueGame()
     {
-        speedDefault = 2f;
         isPause = false;
+        gameJumpButton.SetActive(true);
+        gamePauseButton.SetActive(true);
+        //speedDefault = 2f;
+        
     }
 
     private void PauseGame()
     {
-        speedDefault = 0f; 
         isPause = true;
+        gameJumpButton.SetActive(false);
+        gamePauseButton.SetActive(false);
+        //speedDefault = 0f; 
+        
     }
 
     private void EndGame()
     {
-
+        game = false;
     }
 
     //push buttons
@@ -556,7 +562,8 @@ public class MenuController : MonoBehaviour
 
         StartGame();
 
-        ChancePanelOpen();
+        ContinueGame();
+        //ChancePanelOpen();
     }//needs removed
 
     //open and close panels
