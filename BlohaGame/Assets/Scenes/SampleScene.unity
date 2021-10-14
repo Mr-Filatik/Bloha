@@ -4561,7 +4561,7 @@ MonoBehaviour:
   - {fileID: 4794412299735458687, guid: 873adfb37709a4147b7be6f254e4048b, type: 3}
   - {fileID: 8395957032838996822, guid: 1c8fb256eb2601f4d924cb380912e673, type: 3}
   speed: 0
-  speedDefault: 6
+  speedDefault: 4
   playerPosition: 0
   playerPositionNew: 0
   playerAnimationCurveY:

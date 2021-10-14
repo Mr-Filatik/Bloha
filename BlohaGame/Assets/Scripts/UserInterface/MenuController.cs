@@ -40,9 +40,9 @@ public class MenuController : MonoBehaviour
     private int playerStep = 3;
     [SerializeField] private float playerPosition = 0;
     [SerializeField] private float playerPositionNew = 0;
-    [SerializeField] private AnimationCurve playerAnimationCurveY;
-    [SerializeField] private AnimationCurve playerAnimationCurveX;
-    [SerializeField] private AnimationCurve playerAnimationCurveS;
+    [SerializeField] private AnimationCurve playerAnimationCurveY = null;
+    [SerializeField] private AnimationCurve playerAnimationCurveX = null;
+    [SerializeField] private AnimationCurve playerAnimationCurveS = null;
 
     GameObject player; // объект игрока, для вызова анимаций и т.п.
     private bool isJump = false;
@@ -119,8 +119,6 @@ public class MenuController : MonoBehaviour
     {
         if (game && !isPause)
         {
-            speed = speedDefault;// + Time.deltaTime * 10 * playerStep * steps[0].transform.position.y / 100; //исправить
-
             DirectionMovement();
 
             LadderMovement();
@@ -129,6 +127,8 @@ public class MenuController : MonoBehaviour
             {
                 AutomaticJump(1);
             }
+
+            SpeedMovement();
 
             if (isJump)
             {
@@ -249,6 +249,18 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    void SpeedMovement(float coefficient = 10f)
+    {
+        if (speedDefault + (playerStep - 3) * 2 - speed < 0)
+        {
+            speed -= Time.deltaTime * coefficient;
+        }
+        else
+        {
+            speed += Time.deltaTime * coefficient;
+        } 
+    }
+
     void LadderMovement()
     {
         for (int i = 0; i < steps.GetLength(0); i++)
@@ -287,39 +299,39 @@ public class MenuController : MonoBehaviour
         }
         else
         {
-            health.GetComponent<HealthController>().MinusHealth();
+            //health.GetComponent<HealthController>().MinusHealth();
             playerPosition = 0;
             PlayerDead();
             //падение
         }
     }
 
-    void DirectionMovement()
+    void DirectionMovement(float coefficient = 1f)
     {
         if (direction == directionCurrent)
         {
             directionCurrent = Random.Range(-directionLimit, directionLimit);
         }
         float d = directionCurrent - direction;
-        if (Mathf.Abs(d) < Time.deltaTime * speed * 20)
-        {
-            direction = directionCurrent;
-            d = 0;
-        }
-        /*if (Mathf.Abs(d) < Time.deltaTime * speed * 10)
+        /*if (Mathf.Abs(d) < Time.deltaTime * speed * 20)
         {
             direction = directionCurrent;
             d = 0;
         }*/
+        if (Mathf.Abs(d) < Time.deltaTime * speed * 10)
+        {
+            direction = directionCurrent;
+            d = 0;
+        }
         if (d < 0)
         {
-            direction -= Time.deltaTime * speed * 20;
-            //direction += Time.deltaTime * speed * d;
+            //direction -= Time.deltaTime * speed * 20;
+            direction += Time.deltaTime * speed * d * coefficient;
         }
         if (d > 0)
         {
-            direction += Time.deltaTime * speed * 20;
-            //direction += Time.deltaTime * speed * d;
+            //direction += Time.deltaTime * speed * 20;
+            direction += Time.deltaTime * speed * d * coefficient;
         }
         directionArrow.transform.localEulerAngles = new Vector3(0, 0, direction);
     }
@@ -330,6 +342,9 @@ public class MenuController : MonoBehaviour
         StepController stepController = inputStep.GetComponent<StepController>();
         stepController.ClearLets();
         stepController.AddLetStatic((float)Random.Range(-200, 200), lets[0]);
+        //прописать возможные вариации спавна и между ними выбирать
+        //или прописать доп пункты в препятствия и среди них рандомно
+        //но несколько препятствий как спавнить, вопрос
     }
 
     public void AutomaticJump(int numberOfStep)
@@ -364,16 +379,28 @@ public class MenuController : MonoBehaviour
 
     void PlayerDead()
     {
-        if (playerHealth > 0) //or 1
+        health.GetComponent<HealthController>().MinusHealth();
+        playerHealth--;
+        if (playerHealth <= 0) //or 1
+        {
+            PauseGame();
+            ChancePanelOpen();
+        }
+        /*if (playerHealth > 1) //or 0
         {
             health.GetComponent<HealthController>().MinusHealth();
+            playerHealth--;
         }
         else
         {
+            health.GetComponent<HealthController>().MinusHealth();
+            playerHealth--;
+            PauseGame();
+            ChancePanelOpen();
             //call chance panel
-        }
+        }*/
     }
-    
+
     public void JumpButtonUp()
     {
         //maybe you need to add fatigue after a long press
@@ -405,9 +432,12 @@ public class MenuController : MonoBehaviour
     {
         game = true;
         isPause = true;
+        speed = speedDefault;
 
         playerPosition = 0;
-        health.GetComponent<HealthController>().SetHealth(3);
+        playerStep = 3;
+        playerHealth = 3;
+        health.GetComponent<HealthController>().SetHealth(playerHealth);
     }
 
     private void ContinueGame()
@@ -415,7 +445,6 @@ public class MenuController : MonoBehaviour
         isPause = false;
         gameJumpButton.SetActive(true);
         gamePauseButton.SetActive(true);
-        //speedDefault = 2f;
         
     }
 
@@ -424,13 +453,19 @@ public class MenuController : MonoBehaviour
         isPause = true;
         gameJumpButton.SetActive(false);
         gamePauseButton.SetActive(false);
-        //speedDefault = 0f; 
         
     }
 
     private void EndGame()
     {
         game = false;
+        isPause = false;
+        for (int i = 0; i < steps.GetLength(0); i++)
+        {
+            steps[i].GetComponent<StepController>().ClearLets();
+            //StepController stepController = steps[i].GetComponent<StepController>();
+            //stepController.ClearLets();
+        }
     }
 
     //push buttons
@@ -472,6 +507,8 @@ public class MenuController : MonoBehaviour
         if (toRestartButton)
         {
             toRestartButton = false;
+            StartGame();
+            ContinueGame();
         }
         else
         {
@@ -590,6 +627,7 @@ public class MenuController : MonoBehaviour
             chancePanelClose = false;
             chancePanel.SetActive(false);
             LosingPanelOpen();
+            EndGame();
         }
         else
         {
