@@ -453,7 +453,6 @@ public class MenuController : MonoBehaviour
         isPause = true;
         gameJumpButton.SetActive(false);
         gamePauseButton.SetActive(false);
-        
     }
 
     private void EndGame()
@@ -571,6 +570,16 @@ public class MenuController : MonoBehaviour
             }
             //mainmenu
         }
+    }
+
+    public void ShopButton()
+    {
+        Debug.Log("Shop");
+    }
+
+    public void ExitButton()
+    {
+        Application.Quit();
     }
 
     public void PlayButton()
@@ -767,13 +776,5 @@ public class MenuController : MonoBehaviour
 
     }
 
-    public void ShopButton()
-    {
-        Debug.Log("Shop");
-    }
-
-    public void ExitButton()
-    {
-        Application.Quit();
-    }
+    
 }
