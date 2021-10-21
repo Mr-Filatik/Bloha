@@ -340,8 +340,9 @@ public class MenuController : MonoBehaviour
     {
         //createStaticLet
         StepController stepController = inputStep.GetComponent<StepController>();
-        stepController.ClearLets();
-        stepController.AddLetStatic((float)Random.Range(-200, 200), lets[0]);
+        stepController.CreateStep(StepPartState.Stable, StepPartState.Empty, StepPartState.Stable);
+        //stepController.ClearLets();
+        //stepController.AddLetStatic((float)Random.Range(-200, 200), lets[0]);
         //прописать возможные вариации спавна и между ними выбирать
         //или прописать доп пункты в препятствия и среди них рандомно
         //но несколько препятствий как спавнить, вопрос
@@ -461,7 +462,7 @@ public class MenuController : MonoBehaviour
         isPause = false;
         for (int i = 0; i < steps.GetLength(0); i++)
         {
-            steps[i].GetComponent<StepController>().ClearLets();
+            //steps[i].GetComponent<StepController>().ClearLets();//=---------------------------------------------------------------------------
             //StepController stepController = steps[i].GetComponent<StepController>();
             //stepController.ClearLets();
         }

@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StepController : MonoBehaviour
 {
-    private GameObject letStatic;
+    /*private GameObject letStatic;
     private float letStaticCoordinate = 0;
 
     public void ClearLets()
@@ -43,4 +44,69 @@ public class StepController : MonoBehaviour
         }
         return false;
     }
+    */
+    [SerializeField] private Image LeftPart = null;
+    [SerializeField] private Image CenterPart = null;
+    [SerializeField] private Image RightPart = null;
+
+    private StepPartState stepPartStateLeft = StepPartState.Stable;
+    private StepPartState stepPartStateCenter = StepPartState.Stable;
+    private StepPartState stepPartStateRight = StepPartState.Stable;
+    public void CreateStep(StepPartState inputStepPartStateLeft, StepPartState inputStepPartStateCenter, StepPartState inputStepPartStateRight)
+    {
+        stepPartStateLeft = inputStepPartStateLeft;
+        stepPartStateCenter = inputStepPartStateCenter;
+        stepPartStateRight = inputStepPartStateRight;
+        if (stepPartStateLeft == StepPartState.Empty)
+        {
+            LeftPart.sprite = null;
+            LeftPart.color = new Color(1, 1, 1, 0);
+        }
+        if (stepPartStateCenter == StepPartState.Empty)
+        {
+            CenterPart.sprite = null;
+            CenterPart.color = new Color(1, 1, 1, 0);
+        }
+        if (stepPartStateRight == StepPartState.Empty)
+        {
+            RightPart.sprite = null;
+            RightPart.color = new Color(1, 1, 1, 0);
+        }
+    }
+    private float borderMain = 200f;
+    private float borderPart = 67f;
+    public StepPartState GetStepPartState(float inputPosition)
+    {
+        if (inputPosition > -borderMain && inputPosition < borderMain)
+        {
+            if (inputPosition > -borderPart && inputPosition < borderPart)
+            {
+                return stepPartStateCenter;
+            }
+            else
+            {
+                if (inputPosition < 0)
+                {
+                    return stepPartStateLeft;
+                }
+                else
+                {
+                    return stepPartStateRight;
+                }
+            }
+        }
+        else
+        {
+            return StepPartState.Empty;
+        }
+    }
+
+}
+
+public enum StepPartState
+{
+    Stable,
+    Unstable,
+    Temporary,
+    Empty
 }
