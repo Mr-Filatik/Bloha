@@ -137,6 +137,24 @@ public class MenuController : MonoBehaviour
             else
             {
                 PlayerMovement();
+                //куда он прыгнул есть ли там место из части
+                StepController stepController = steps[playerStep].GetComponent<StepController>();
+                StepPartState stepPartState = stepController.GetStepPartState(playerPosition);
+                if (stepPartState == StepPartState.Stable)
+                {
+                    
+                    if (stepController.GetLetState(playerPosition) == LetState.Empty)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                }
+                Debug.Log(stepController.GetStepPartState(playerPosition).ToString());
+                //куда он прыгнул есть ли там препятствие
+
             }
         }
 
@@ -340,7 +358,7 @@ public class MenuController : MonoBehaviour
     {
         //createStaticLet
         StepController stepController = inputStep.GetComponent<StepController>();
-        stepController.CreateStep(StepPartState.Stable, StepPartState.Empty, StepPartState.Stable);
+        stepController.CreateStepPart(StepPartState.Stable, StepPartState.Empty, StepPartState.Stable);
         //stepController.ClearLets();
         //stepController.AddLetStatic((float)Random.Range(-200, 200), lets[0]);
         //прописать возможные вариации спавна и между ними выбирать

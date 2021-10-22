@@ -52,7 +52,9 @@ public class StepController : MonoBehaviour
     private StepPartState stepPartStateLeft = StepPartState.Stable;
     private StepPartState stepPartStateCenter = StepPartState.Stable;
     private StepPartState stepPartStateRight = StepPartState.Stable;
-    public void CreateStep(StepPartState inputStepPartStateLeft, StepPartState inputStepPartStateCenter, StepPartState inputStepPartStateRight)
+    private GameObject[] lets = null;
+
+    public void CreateStepPart(StepPartState inputStepPartStateLeft, StepPartState inputStepPartStateCenter, StepPartState inputStepPartStateRight)
     {
         stepPartStateLeft = inputStepPartStateLeft;
         stepPartStateCenter = inputStepPartStateCenter;
@@ -73,8 +75,15 @@ public class StepController : MonoBehaviour
             RightPart.color = new Color(1, 1, 1, 0);
         }
     }
+
+    public void CreateStepLet(GameObject inputGameObject)
+    {
+        lets = new GameObject[1];
+    }
+
     private float borderMain = 200f;
     private float borderPart = 67f;
+
     public StepPartState GetStepPartState(float inputPosition)
     {
         if (inputPosition > -borderMain && inputPosition < borderMain)
@@ -101,12 +110,32 @@ public class StepController : MonoBehaviour
         }
     }
 
+    public LetState GetLetState(float inputPosition)
+    {
+        for (int i = 0; i < lets.GetLength(0); i++)
+        {
+            if (true)
+            {
+                return LetState.Empty;
+            }
+            return LetState.Static;
+        }
+        return LetState.Empty;
+    }
 }
 
 public enum StepPartState
 {
-    Stable,
-    Unstable,
-    Temporary,
-    Empty
+    Stable, //обычная часть ступени
+    Unstable, //ломающаяся, падающая часть
+    Temporary, //ломающееся через время
+    Empty //отсутствует часть
+}
+
+public enum LetState
+{
+    Static, //статичное препятствие
+    DynamicOn, //динамическое но активное
+    DynamicOff, //динамическое спящее
+    Empty //отсутствует 
 }
