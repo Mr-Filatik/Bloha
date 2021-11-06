@@ -49,17 +49,55 @@ public class MenuScript : MonoBehaviour
         openObject.SetActive(true);
     }
 
-    
+    public void ToInfo()
+    {
+        openObject = infoPanel;
+        openObject.SetActive(true);
+    }
+
+    public void ToGame()
+    {
+        openObject = gamePanel;
+        openObject.SetActive(true);
+    }
+
+    public void ToPause()
+    {
+        openObject = pausePanel;
+        openObject.SetActive(true);
+    }
+
+    public void ToLosing()
+    {
+        openObject = losingPanel;
+        openObject.SetActive(true);
+    }
+
+    public void ToChance()
+    {
+        openObject = chancePanel;
+        openObject.SetActive(true);
+    }
 
     private void Awake()
     {
         menuPanel.SetActive(true);
         shopPanel.SetActive(false);
         settingsPanel.SetActive(false);
+        infoPanel.SetActive(false);
+        gamePanel.SetActive(false);
+        chancePanel.SetActive(false);
+        pausePanel.SetActive(false);
+        losingPanel.SetActive(false);
 
         menuPanel.transform.localPosition = panelStartPosition;
         shopPanel.transform.localPosition = panelStartPosition;
         settingsPanel.transform.localPosition = panelStartPosition;
+        infoPanel.transform.localPosition = panelStartPosition;
+        gamePanel.transform.localPosition = panelStartPosition;
+        chancePanel.transform.localPosition = panelStartPosition;
+        pausePanel.transform.localPosition = panelStartPosition;
+        losingPanel.transform.localPosition = panelStartPosition;
 
         openObject = menuPanel;
         closeObject = null;
