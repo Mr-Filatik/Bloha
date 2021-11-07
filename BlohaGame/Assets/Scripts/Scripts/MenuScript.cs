@@ -15,6 +15,9 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private GameObject pausePanel = null; //pause
     [SerializeField] private GameObject losingPanel = null; //losing
     [SerializeField] private GameObject chancePanel = null; //chance
+    [SerializeField] private GameObject flaskPanel = null; //flask
+    [SerializeField] private GameObject healthPanel = null; //health
+    [SerializeField] private GameObject directionPanel = null; //direction
 
     [Header("Panels animation")]
     [SerializeField] private AnimationCurve panelAnimationX = null; //right - left
@@ -22,61 +25,77 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private AnimationCurve panelAnimationScale = null; //scale
 
     [Header("Panels position")]
-    [SerializeField] private Vector3 panelStartPosition = Vector3.zero; //start position for panel
-    [SerializeField] private Vector3 panelEndPosition = Vector3.zero; //end position for panel
+    [SerializeField] private Vector3 startDownPosition = Vector3.zero;
+    [SerializeField] private Vector3 endDownPosition = Vector3.zero;
+    [SerializeField] private Vector3 startUpPosition = Vector3.zero;
+    [SerializeField] private Vector3 endUpPosition = Vector3.zero;
+    [SerializeField] private Vector3 startLeftPosition = Vector3.zero;
+    [SerializeField] private Vector3 endLeftPosition = Vector3.zero;
+    [SerializeField] private Vector3 startRightPosition = Vector3.zero;
+    [SerializeField] private Vector3 endRightPosition = Vector3.zero;
 
-    //переделать под массивы
-    private GameObject closeObject = null;
-    private GameObject openObject = null;
+    private PanelClass[] closeObject = null;
+    private PanelClass[] openObject = null;
 
     private float currentTimeForPanel;
 
     public void ToMenu()
     {
-        openObject = menuPanel;
-        openObject.SetActive(true);
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(menuPanel, startDownPosition, endDownPosition);
+        SetActiveGameObject(openObject);
     }
 
     public void ToSettings()
     {
-        openObject = settingsPanel;
-        openObject.SetActive(true);
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(settingsPanel, startDownPosition, endDownPosition);
+        SetActiveGameObject(openObject);
     }
 
     public void ToShop()
     {
-        openObject = shopPanel;
-        openObject.SetActive(true);
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(shopPanel, startDownPosition, endDownPosition);
+        SetActiveGameObject(openObject);
     }
 
     public void ToInfo()
     {
-        openObject = infoPanel;
-        openObject.SetActive(true);
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(infoPanel, startDownPosition, endDownPosition);
+        SetActiveGameObject(openObject);
     }
 
     public void ToGame()
     {
-        openObject = gamePanel;
-        openObject.SetActive(true);
+        openObject = new PanelClass[4];
+        openObject[0] = new PanelClass(gamePanel, startUpPosition, endUpPosition);
+        openObject[1] = new PanelClass(flaskPanel, startRightPosition, endRightPosition);
+        openObject[2] = new PanelClass(healthPanel, startLeftPosition, endLeftPosition);
+        openObject[3] = new PanelClass(directionPanel, startDownPosition, endDownPosition);
+        SetActiveGameObject(openObject);
     }
 
     public void ToPause()
     {
-        openObject = pausePanel;
-        openObject.SetActive(true);
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(pausePanel, startDownPosition, endDownPosition);
+        SetActiveGameObject(openObject);
     }
 
     public void ToLosing()
     {
-        openObject = losingPanel;
-        openObject.SetActive(true);
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(losingPanel, startDownPosition, endDownPosition);
+        SetActiveGameObject(openObject);
     }
 
     public void ToChance()
     {
-        openObject = chancePanel;
-        openObject.SetActive(true);
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(chancePanel, startDownPosition, endDownPosition);
+        SetActiveGameObject(openObject);
     }
 
     private void Awake()
@@ -89,17 +108,29 @@ public class MenuScript : MonoBehaviour
         chancePanel.SetActive(false);
         pausePanel.SetActive(false);
         losingPanel.SetActive(false);
+        flaskPanel.SetActive(false);
+        healthPanel.SetActive(false);
+        directionPanel.SetActive(false);
 
-        menuPanel.transform.localPosition = panelStartPosition;
-        shopPanel.transform.localPosition = panelStartPosition;
-        settingsPanel.transform.localPosition = panelStartPosition;
-        infoPanel.transform.localPosition = panelStartPosition;
-        gamePanel.transform.localPosition = panelStartPosition;
-        chancePanel.transform.localPosition = panelStartPosition;
-        pausePanel.transform.localPosition = panelStartPosition;
-        losingPanel.transform.localPosition = panelStartPosition;
+        if (Screen.height / Screen.width > 16 / 9)
+        {
 
-        openObject = menuPanel;
+        }
+        
+        menuPanel.transform.localPosition = startDownPosition;
+        shopPanel.transform.localPosition = startDownPosition;
+        settingsPanel.transform.localPosition = startDownPosition;
+        infoPanel.transform.localPosition = startDownPosition;
+        chancePanel.transform.localPosition = startDownPosition;
+        pausePanel.transform.localPosition = startDownPosition;
+        losingPanel.transform.localPosition = startDownPosition;
+        gamePanel.transform.localPosition = startUpPosition;
+        flaskPanel.transform.localPosition = startRightPosition;
+        healthPanel.transform.localPosition = startLeftPosition;
+        directionPanel.transform.localPosition = startDownPosition;
+
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(menuPanel, startDownPosition, endDownPosition);
         closeObject = null;
 
         currentTimeForPanel = 0f;
@@ -116,46 +147,82 @@ public class MenuScript : MonoBehaviour
         {
             if (closeObject != null)
             {
-                PanelClose(closeObject, panelStartPosition, panelEndPosition);
+                PanelClose(closeObject);
             }
             else
             {
-                PanelOpen(openObject, panelStartPosition, panelEndPosition);
+                PanelOpen(openObject);
             }
         }
     }
 
-    private void PanelOpen(GameObject gameObject, Vector3 startVector, Vector3 endVector)
+    private void PanelOpen(PanelClass[] gameObject)
     {
         if (currentTimeForPanel >= panelAnimationY.keys[panelAnimationY.keys.Length - 1].time)
         {
             closeObject = openObject;
             openObject = null;
-            gameObject.transform.localPosition = endVector;
+            foreach (PanelClass item in gameObject)
+            {
+                item.gameObject.transform.localPosition = item.vectorEnd;
+            }
             currentTimeForPanel = 1f;
         }
         else
         {
-            gameObject.transform.localPosition = new Vector3(startVector.x + (endVector.x - startVector.x) * panelAnimationX.Evaluate(currentTimeForPanel), startVector.y + (endVector.y - startVector.y) * panelAnimationY.Evaluate(currentTimeForPanel));
-            gameObject.transform.localScale = new Vector3(panelAnimationScale.Evaluate(currentTimeForPanel), panelAnimationScale.Evaluate(currentTimeForPanel));
+            foreach (PanelClass item in gameObject)
+            {
+                item.gameObject.transform.localPosition = new Vector3(item.vectorStart.x + (item.vectorEnd.x - item.vectorStart.x) * panelAnimationX.Evaluate(currentTimeForPanel), item.vectorStart.y + (item.vectorEnd.y - item.vectorStart.y) * panelAnimationY.Evaluate(currentTimeForPanel));
+                item.gameObject.transform.localScale = new Vector3(panelAnimationScale.Evaluate(currentTimeForPanel), panelAnimationScale.Evaluate(currentTimeForPanel));
+            }
             currentTimeForPanel += Time.deltaTime;
         }
     }
 
-    private void PanelClose(GameObject gameObject, Vector3 startVector, Vector3 endVector)
+    private void PanelClose(PanelClass[] gameObject)
     {
         if (currentTimeForPanel <= 0)
         {
-            closeObject.SetActive(false);
+            foreach (PanelClass item in closeObject)
+            {
+                item.gameObject.SetActive(false);
+            }
             closeObject = null;
-            gameObject.transform.localPosition = startVector;
+            foreach (PanelClass item in gameObject)
+            {
+                item.gameObject.transform.localPosition = item.vectorStart;
+            }
             currentTimeForPanel = 0f;
         }
         else
         {
-            gameObject.transform.localPosition = new Vector3(startVector.x + (endVector.x - startVector.x) * panelAnimationX.Evaluate(currentTimeForPanel), startVector.y + (endVector.y - startVector.y) * panelAnimationY.Evaluate(currentTimeForPanel));
-            gameObject.transform.localScale = new Vector3(panelAnimationScale.Evaluate(currentTimeForPanel), panelAnimationScale.Evaluate(currentTimeForPanel));
+            foreach (PanelClass item in gameObject)
+            {
+                item.gameObject.transform.localPosition = new Vector3(item.vectorStart.x + (item.vectorEnd.x - item.vectorStart.x) * panelAnimationX.Evaluate(currentTimeForPanel), item.vectorStart.y + (item.vectorEnd.y - item.vectorStart.y) * panelAnimationY.Evaluate(currentTimeForPanel));
+                item.gameObject.transform.localScale = new Vector3(panelAnimationScale.Evaluate(currentTimeForPanel), panelAnimationScale.Evaluate(currentTimeForPanel));
+            }
             currentTimeForPanel -= Time.deltaTime;
         }
+    }
+
+    private void SetActiveGameObject(PanelClass[] gameObject)
+    {
+        foreach (PanelClass item in gameObject)
+        {
+            item.gameObject.SetActive(true);
+        }
+    }
+}
+
+public class PanelClass
+{
+    public GameObject gameObject;
+    public Vector3 vectorStart;
+    public Vector3 vectorEnd;
+    public PanelClass(GameObject gameObject, Vector3 vectorStart, Vector3 vectorEnd)
+    {
+        this.gameObject = gameObject;
+        this.vectorStart = vectorStart;
+        this.vectorEnd = vectorEnd;
     }
 }
