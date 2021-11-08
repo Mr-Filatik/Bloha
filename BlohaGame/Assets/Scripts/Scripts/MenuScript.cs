@@ -18,6 +18,7 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private GameObject flaskPanel = null; //flask
     [SerializeField] private GameObject healthPanel = null; //health
     [SerializeField] private GameObject directionPanel = null; //direction
+    [SerializeField] private GameObject countdownPanel = null; //direction
 
     [Header("Panels animation")]
     [SerializeField] private AnimationCurve panelAnimationX = null; //right - left
@@ -67,6 +68,13 @@ public class MenuScript : MonoBehaviour
         SetActiveGameObject(openObject);
     }
 
+    public void ToStart()
+    {
+        openObject = new PanelClass[1];
+        openObject[0] = new PanelClass(countdownPanel, endUpPosition, endUpPosition);
+        SetActiveGameObject(openObject);
+    }
+
     public void ToGame()
     {
         openObject = new PanelClass[4];
@@ -100,6 +108,8 @@ public class MenuScript : MonoBehaviour
 
     private void Awake()
     {
+        Screen.orientation = ScreenOrientation.Portrait;
+
         menuPanel.SetActive(true);
         shopPanel.SetActive(false);
         settingsPanel.SetActive(false);
@@ -111,6 +121,7 @@ public class MenuScript : MonoBehaviour
         flaskPanel.SetActive(false);
         healthPanel.SetActive(false);
         directionPanel.SetActive(false);
+        countdownPanel.SetActive(false);
 
         if (Screen.height / Screen.width > 16 / 9)
         {
@@ -128,6 +139,7 @@ public class MenuScript : MonoBehaviour
         flaskPanel.transform.localPosition = startRightPosition;
         healthPanel.transform.localPosition = startLeftPosition;
         directionPanel.transform.localPosition = startDownPosition;
+        countdownPanel.transform.localPosition = endDownPosition;
 
         openObject = new PanelClass[1];
         openObject[0] = new PanelClass(menuPanel, startDownPosition, endDownPosition);
@@ -183,16 +195,24 @@ public class MenuScript : MonoBehaviour
     {
         if (currentTimeForPanel <= 0)
         {
+            currentTimeForPanel = 0f;
             foreach (PanelClass item in closeObject)
             {
                 item.gameObject.SetActive(false);
             }
             closeObject = null;
+
+            if (openObject[0].gameObject == countdownPanel)
+            {
+                closeObject = openObject;
+                openObject = null;
+                countdownPanel.GetComponent<CountdownMenuScript>().StartGame();
+            } //------------------------------------------------------------------------------------------bad for timer
+
             foreach (PanelClass item in gameObject)
             {
                 item.gameObject.transform.localPosition = item.vectorStart;
             }
-            currentTimeForPanel = 0f;
         }
         else
         {
