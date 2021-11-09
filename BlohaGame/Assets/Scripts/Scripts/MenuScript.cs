@@ -18,7 +18,8 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private GameObject flaskPanel = null; //flask
     [SerializeField] private GameObject healthPanel = null; //health
     [SerializeField] private GameObject directionPanel = null; //direction
-    [SerializeField] private GameObject countdownPanel = null; //direction
+    [SerializeField] private GameObject countdownPanel = null; //countdown
+    [SerializeField] private GameObject gamePlayPanel = null; //gameplay
 
     [Header("Panels animation")]
     [SerializeField] private AnimationCurve panelAnimationX = null; //right - left
@@ -45,6 +46,9 @@ public class MenuScript : MonoBehaviour
         openObject = new PanelClass[1];
         openObject[0] = new PanelClass(menuPanel, startDownPosition, endDownPosition);
         SetActiveGameObject(openObject);
+
+        directionPanel.GetComponent<DirectionMenuScript>().GameEnd();
+        gamePlayPanel.GetComponent<GamePlayMenuScript>().GameEnd();
     }
 
     public void ToSettings()
@@ -73,6 +77,9 @@ public class MenuScript : MonoBehaviour
         openObject = new PanelClass[1];
         openObject[0] = new PanelClass(countdownPanel, endUpPosition, endUpPosition);
         SetActiveGameObject(openObject);
+
+        directionPanel.GetComponent<DirectionMenuScript>().GameStart();
+        gamePlayPanel.GetComponent<GamePlayMenuScript>().GameStart();
     }
 
     public void ToGame()
@@ -90,6 +97,9 @@ public class MenuScript : MonoBehaviour
         openObject = new PanelClass[1];
         openObject[0] = new PanelClass(pausePanel, startDownPosition, endDownPosition);
         SetActiveGameObject(openObject);
+
+        directionPanel.GetComponent<DirectionMenuScript>().GamePause();
+        gamePlayPanel.GetComponent<GamePlayMenuScript>().GamePause();
     }
 
     public void ToLosing()
@@ -172,6 +182,11 @@ public class MenuScript : MonoBehaviour
     {
         if (currentTimeForPanel >= panelAnimationY.keys[panelAnimationY.keys.Length - 1].time)
         {
+            if (openObject.GetLength(0) > 3)
+            {
+                directionPanel.GetComponent<DirectionMenuScript>().GameContinue();
+                gamePlayPanel.GetComponent<GamePlayMenuScript>().GameContinue();
+            } //------------------------------------------------------------------------------bad for start
             closeObject = openObject;
             openObject = null;
             foreach (PanelClass item in gameObject)

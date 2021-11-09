@@ -19,6 +19,7 @@ public class CountdownMenuScript : MonoBehaviour
     public void StartGame()
     {
         isGame = true;
+        visibleObject = imageOne;
     }
 
     private void Awake()
@@ -40,16 +41,19 @@ public class CountdownMenuScript : MonoBehaviour
             {
                 if (visibleObject == imageThree)
                 {
+                    imageThree.GetComponent<Image>().color = new Color(1, 1, 1, 0);
                     visibleObject = null;
                     isGame = false;
                     mainMenu.GetComponent<MenuScript>().ToGame();
                 }
                 if (visibleObject == imageTwo)
                 {
+                    imageTwo.GetComponent<Image>().color = new Color(1, 1, 1, 0);
                     visibleObject = imageThree;
                 }
                 if (visibleObject == imageOne)
                 {
+                    imageOne.GetComponent<Image>().color = new Color(1, 1, 1, 0);
                     visibleObject = imageTwo;
                 }
                 currentTime = 0f;

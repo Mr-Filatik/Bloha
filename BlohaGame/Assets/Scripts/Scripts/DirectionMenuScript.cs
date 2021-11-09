@@ -12,28 +12,37 @@ public class DirectionMenuScript : MonoBehaviour
     private float direction = 0;
     private bool leftRigth = true;
     private bool isGame = false;
+    private bool isPause = false;
 
     public float Direction => direction;
 
     public void GameStart()
     {
         direction = 0;
+        directionObject.transform.localEulerAngles = new Vector3(0, 0, direction);
         isGame = true;
+        isPause = true;
     }
 
     public void GamePause()
     {
-        isGame = false;
+        isPause = true;
+    }
+
+    public void GameContinue()
+    {
+        isPause = false;
     }
 
     public void GameEnd()
     {
         isGame = false;
+        isPause = false;
     }
 
     private void Update()
     {
-        if (isGame)
+        if (isGame && !isPause)
         {
             if (leftRigth)
             {
