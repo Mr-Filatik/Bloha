@@ -164,7 +164,7 @@ public class GamePlayMenuScript : MonoBehaviour
     {
         for (int i = 0; i < steps.GetLength(0); i++)
         {
-            steps[i].transform.localScale = new Vector3((float)(100 - i * ((1f - reductionOfSteps) * 100) + (-steps[0].transform.localPosition.y * 2) / 100) / 100, (float)(100 - i * ((1f - reductionOfSteps) * 100) + (-steps[0].transform.localPosition.y * 2) / 100) / 100, 1);
+            steps[i].transform.localScale = new Vector3((float)(100 - i * ((1f - reductionOfSteps) * 100) + (-steps[0].transform.localPosition.y * ((1f - reductionOfSteps) * 100)) / 100) / 100, (float)(100 - i * ((1f - reductionOfSteps) * 100) + (-steps[0].transform.localPosition.y * ((1f - reductionOfSteps) * 100)) / 100) / 100, 1);
             steps[i].transform.localPosition = new Vector3(steps[i].transform.localPosition.x, steps[i].transform.localPosition.y - Time.deltaTime * 10 * speed * steps[i].transform.localScale.y, steps[i].transform.localPosition.z);
         }
         if (steps[1].transform.localScale.y >= 1)
