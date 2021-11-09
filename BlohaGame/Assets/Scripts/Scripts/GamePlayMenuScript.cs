@@ -9,6 +9,10 @@ public class GamePlayMenuScript : MonoBehaviour
     [SerializeField] private float reductionOfSteps; //0.98
     [SerializeField] private float initialDistance; //108
 
+    [SerializeField] private float decreaseInHeight;
+    [SerializeField] private float decreaseInWidth;
+    [SerializeField] private float startInWidth;
+
     private float speed;
     [SerializeField] private float speedDefault;
 
@@ -40,7 +44,6 @@ public class GamePlayMenuScript : MonoBehaviour
     [SerializeField] private float cooldownForJumpButton;
     [SerializeField] private float timeForButton;
 
-
     //hz
     private Transform stepFrom = null;
     private Transform stepTo = null;
@@ -48,8 +51,6 @@ public class GamePlayMenuScript : MonoBehaviour
     private float distance;
     private float difference;
     private float interval;
-
-
 
     public void GameStart()
     {
@@ -93,13 +94,20 @@ public class GamePlayMenuScript : MonoBehaviour
         //flaskMenuScript = flaskObject.GetComponent<FlaskMenuScript>();
         //healthMenuScript = healthObject.GetComponent<HealthMenuScript>();
 
-        steps[0].transform.localPosition = new Vector3(0, 0, 0);
+        steps[0].transform.localPosition = new Vector3(0, 0, steps.GetLength(0));
         steps[0].transform.localScale = new Vector3(1, 1, 1);
         for (int i = 1; i < steps.GetLength(0); i++)
         {
-            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + 108 * (steps[i - 1].transform.localScale.x - (1f - reductionOfSteps)), 0);
-            steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - (1f - reductionOfSteps), steps[i - 1].transform.localScale.y - (1f - reductionOfSteps), 0);
+            steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - (startInWidth - (i) * decreaseInWidth), steps[i - 1].transform.localScale.y - decreaseInHeight, 0);
+            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + (steps[i - 1].transform.localScale.y * initialDistance + steps[i].transform.localScale.y * initialDistance) / 2, steps.GetLength(0) - i);
         }
+        /*steps[0].transform.localPosition = new Vector3(0, 0, 0);
+        steps[0].transform.localScale = new Vector3(1, 1, 1);
+        for (int i = 1; i < steps.GetLength(0); i++)
+        {
+            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + initialDistance * (steps[i - 1].transform.localScale.x - (1f - reductionOfSteps) / 2), 0);
+            steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - (1f - reductionOfSteps), steps[i - 1].transform.localScale.y - (1f - reductionOfSteps), 0);
+        }*/
 
         //needs changes
         PlayerMovement();
@@ -164,6 +172,21 @@ public class GamePlayMenuScript : MonoBehaviour
     {
         for (int i = 0; i < steps.GetLength(0); i++)
         {
+            steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - (startInWidth - (i) * decreaseInWidth), steps[i - 1].transform.localScale.y - decreaseInHeight, 0);
+            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + (steps[i - 1].transform.localScale.y * initialDistance + steps[i].transform.localScale.y * initialDistance) / 2, steps.GetLength(0) - i);
+        }
+        if (steps[1].transform.localPosition.z >= steps.GetLength(0))
+        {
+            GameObject none = steps[0];
+            for (int i = 1; i < steps.GetLength(0); i++)
+            {
+                steps[i - 1] = steps[i];
+            }
+            steps[steps.GetLength(0) - 1] = none;
+            //--------------------------------------------------------------------here
+        }
+        /*for (int i = 0; i < steps.GetLength(0); i++)
+        {
             steps[i].transform.localScale = new Vector3((float)(100 - i * ((1f - reductionOfSteps) * 100) + (-steps[0].transform.localPosition.y * ((1f - reductionOfSteps) * 100)) / 100) / 100, (float)(100 - i * ((1f - reductionOfSteps) * 100) + (-steps[0].transform.localPosition.y * ((1f - reductionOfSteps) * 100)) / 100) / 100, 1);
             steps[i].transform.localPosition = new Vector3(steps[i].transform.localPosition.x, steps[i].transform.localPosition.y - Time.deltaTime * 10 * speed * steps[i].transform.localScale.y, steps[i].transform.localPosition.z);
         }
@@ -175,12 +198,13 @@ public class GamePlayMenuScript : MonoBehaviour
                 steps[i - 1] = steps[i];
             }
             steps[steps.GetLength(0) - 1] = none;
-            steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, steps[steps.GetLength(0) - 2].transform.localPosition.y + 108 * (steps[steps.GetLength(0) - 2].transform.localScale.x - (1f - reductionOfSteps)), 0);
+            steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, steps[steps.GetLength(0) - 2].transform.localPosition.y + initialDistance * (steps[steps.GetLength(0) - 2].transform.localScale.x - (1f - reductionOfSteps)), 0);
             steps[steps.GetLength(0) - 1].transform.SetSiblingIndex(0);
             playerStep--;
+            //steps[steps.GetLength(0) - 1].GetComponent<StepScript>().SetTransparency(0f);
             //calling the obstacle generating method
             CreateLets(steps[steps.GetLength(0) - 1]);
-        }
+        }*/
     }
 
     private void CreateLets(GameObject inputStep)
