@@ -6,7 +6,7 @@ public class GamePlayMenuScript : MonoBehaviour
 {
     [Header("Ladder")]
     [SerializeField] private GameObject[] steps = null;
-    [SerializeField] private float reductionOfSteps; //0.92
+    [SerializeField] private float reductionOfSteps; //0.98
     [SerializeField] private float initialDistance; //108
 
     private float speed;
@@ -165,7 +165,7 @@ public class GamePlayMenuScript : MonoBehaviour
         for (int i = 0; i < steps.GetLength(0); i++)
         {
             steps[i].transform.localScale = new Vector3((float)(100 - i * ((1f - reductionOfSteps) * 100) + (-steps[0].transform.localPosition.y * 2) / 100) / 100, (float)(100 - i * ((1f - reductionOfSteps) * 100) + (-steps[0].transform.localPosition.y * 2) / 100) / 100, 1);
-            steps[i].transform.localPosition = new Vector3(steps[i].transform.localPosition.x, steps[i].transform.localPosition.y - Time.deltaTime * 10 * speed * steps[i].transform.localScale.x, steps[i].transform.localPosition.z);
+            steps[i].transform.localPosition = new Vector3(steps[i].transform.localPosition.x, steps[i].transform.localPosition.y - Time.deltaTime * 10 * speed * steps[i].transform.localScale.y, steps[i].transform.localPosition.z);
         }
         if (steps[1].transform.localScale.y >= 1)
         {
@@ -209,10 +209,10 @@ public class GamePlayMenuScript : MonoBehaviour
     {
         if (currentTime <= animationTime)
         {
-            distance = (stepTo.localPosition.y - stepFrom.localPosition.y) * 0.8f;
-            difference = (stepFrom.localScale.x - stepTo.localScale.x) * 1f;
-            interval = (playerPositionNew * stepTo.localScale.x - playerPosition * stepFrom.localScale.x) * 0.8f;
-            player.transform.localPosition = new Vector3(playerPosition * 0.8f * stepFrom.localScale.x + playerAnimationCurveX.Evaluate(currentTime) * interval, stepFrom.localPosition.y * 0.8f + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.z);
+            distance = (stepTo.localPosition.y - stepFrom.localPosition.y);
+            difference = (stepFrom.localScale.x - stepTo.localScale.x);
+            interval = (playerPositionNew * stepTo.localScale.x - playerPosition * stepFrom.localScale.x);
+            player.transform.localPosition = new Vector3(playerPosition * stepFrom.localScale.x + playerAnimationCurveX.Evaluate(currentTime) * interval, stepFrom.localPosition.y + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.z);
             player.transform.localScale = new Vector3(stepFrom.localScale.x - playerAnimationCurveS.Evaluate(currentTime) * difference, stepFrom.localScale.y - playerAnimationCurveS.Evaluate(currentTime) * difference, stepTo.localScale.z);
             currentTime += Time.deltaTime;
         }
@@ -231,7 +231,7 @@ public class GamePlayMenuScript : MonoBehaviour
         player.transform.localScale = new Vector3(steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.y, steps[playerStep].transform.localScale.z);
         if (playerPosition > -200 && playerPosition < 200)
         {
-            player.transform.localPosition = new Vector3(playerPosition * player.transform.localScale.x * 0.8f, steps[playerStep].transform.localPosition.y * 0.8f, steps[playerStep].transform.localPosition.z * 0.8f);
+            player.transform.localPosition = new Vector3(playerPosition * player.transform.localScale.x, steps[playerStep].transform.localPosition.y, steps[playerStep].transform.localPosition.z);
         }
         else
         {
