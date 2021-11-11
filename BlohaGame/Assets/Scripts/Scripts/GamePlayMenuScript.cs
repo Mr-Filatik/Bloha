@@ -158,31 +158,52 @@ public class GamePlayMenuScript : MonoBehaviour
 
     private void SpeedMovement(float coefficient = 10f)
     {
-        if (speedDefault + (playerStep - 3) * 2 - speed < 0)
+        speed = Time.deltaTime * coefficient * 400;
+        /*if (speedDefault + (playerStep - 3) * 2 - speed < 0)
         {
-            speed -= Time.deltaTime * coefficient;
+            speed -= Time.deltaTime * coefficient / 5f;
         }
         else
         {
-            speed += Time.deltaTime * coefficient;
+            speed += Time.deltaTime * coefficient / 5f;
+        }*/
+    }
+
+    private float LadderScaleX(int input)
+    {
+        float result = 0f;
+        for (int i = 1; i <= input; i++)
+        {
+            result += (startInWidth - (i) * decreaseInWidth);
         }
+        return result;
     }
 
     private void LadderMovement()
     {
+        //добавить больше лестниц и на крайних задействовать полупрозрачность ещё 2 и прозрасность 0-50 50-100 у последней координата такая же
+        //float percent = steps[0].transform.localPosition.z - Mathf.Floor(steps[0].transform.localPosition.z);
+        float percent = -steps[0].transform.localPosition.y / ((steps[0].transform.localScale.y * initialDistance + (steps[0].transform.localScale.y + decreaseInHeight) * initialDistance) / 2);
         for (int i = 0; i < steps.GetLength(0); i++)
         {
-            steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - (startInWidth - (i) * decreaseInWidth), steps[i - 1].transform.localScale.y - decreaseInHeight, 0);
-            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + (steps[i - 1].transform.localScale.y * initialDistance + steps[i].transform.localScale.y * initialDistance) / 2, steps.GetLength(0) - i);
+            steps[i].transform.localScale = new Vector3(1 - LadderScaleX(i) + (startInWidth - (i) * decreaseInWidth) * percent, 1 - decreaseInHeight * i + decreaseInHeight * percent, 1);
+            steps[i].transform.localPosition = new Vector3(0, steps[i].transform.localPosition.y - Time.deltaTime * speed * steps[i].transform.localScale.y, steps[i].transform.localPosition.z);
         }
-        if (steps[1].transform.localPosition.z >= steps.GetLength(0))
+        //steps[0].transform.localPosition.y + (steps[0].transform.localScale.y * initialDistance + (steps[0].transform.localScale.y + decreaseInHeight) * initialDistance) / 2
+        //if (steps[1].transform.localPosition.z >= steps.GetLength(0))
+        if (percent >= 1)
         {
             GameObject none = steps[0];
             for (int i = 1; i < steps.GetLength(0); i++)
             {
                 steps[i - 1] = steps[i];
+                //зет индекс по обратной
             }
             steps[steps.GetLength(0) - 1] = none;
+            steps[steps.GetLength(0) - 1].transform.SetSiblingIndex(0);
+            //steps[steps.GetLength(0) - 1].GetComponent<StepScript>().SetTransparency(0f);
+            steps[steps.GetLength(0) - 1].transform.localScale = new Vector3(steps[steps.GetLength(0) - 2].transform.localScale.x - (startInWidth - (steps.GetLength(0) - 1) * decreaseInWidth), steps[steps.GetLength(0) - 2].transform.localScale.y - decreaseInHeight, 0);
+            steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, steps[steps.GetLength(0) - 2].transform.localPosition.y + (steps[steps.GetLength(0) - 2].transform.localScale.y * initialDistance + steps[steps.GetLength(0) - 1].transform.localScale.y * initialDistance) / 2, steps.GetLength(0) - steps.GetLength(0) - 1);
             //--------------------------------------------------------------------here
         }
         /*for (int i = 0; i < steps.GetLength(0); i++)
