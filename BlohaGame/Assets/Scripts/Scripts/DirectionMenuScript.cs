@@ -6,7 +6,7 @@ public class DirectionMenuScript : MonoBehaviour
 {
     [SerializeField] private GameObject directionObject = null;
     [SerializeField] private float borderValue;
-    [SerializeField] private float speed = 2;
+    [SerializeField] private float speed = 3;
     [SerializeField] private float acceleration = 5;
 
     private float direction = 0;

@@ -39,10 +39,11 @@ public class GamePlayMenuScript : MonoBehaviour
     public bool IsGame => isGame;
     private bool isPause;
     private bool isJump;
+    private bool isDoubleJump;
     private float direction;
     private float currentTime;
     [SerializeField] private float cooldownForJumpButton;
-    [SerializeField] private float timeForButton;
+    private float timeForButton;
 
     //hz
     private Transform stepFrom = null;
@@ -51,6 +52,8 @@ public class GamePlayMenuScript : MonoBehaviour
     private float distance;
     private float difference;
     private float interval;
+
+    #region Public Methods
 
     public void GameStart()
     {
@@ -89,9 +92,28 @@ public class GamePlayMenuScript : MonoBehaviour
         isPause = false;
     }
 
+    public void JumpButton()
+    {
+        if (!isJump)
+        {
+            if (Time.realtimeSinceStartup - timeForButton <= cooldownForJumpButton)
+            {
+                isDoubleJump = false;
+                animationTime = 2f;
+                AutomaticJump(2);
+            }
+            else
+            {
+                isDoubleJump = true;
+            }
+            timeForButton = Time.realtimeSinceStartup;
+        }
+    }
+
     private void Awake()
     {
-        speedDefault = 2f;
+        speedDefault = 25f;
+        speed = speedDefault;
         playerStep = 3;
         isGame = false;
         isPause = false;
@@ -104,28 +126,33 @@ public class GamePlayMenuScript : MonoBehaviour
         distance = 0f;
         difference = 0f;
         interval = 0f;
+        timeForButton = 0f;
+        isDoubleJump = false;
         menuScript = menuCanvas.GetComponent<MenuScript>();
         directionMenuScript = directionObject.GetComponent<DirectionMenuScript>();
         //flaskMenuScript = flaskObject.GetComponent<FlaskMenuScript>();
         //healthMenuScript = healthObject.GetComponent<HealthMenuScript>();
 
         GameStart();
-        /*steps[0].transform.localPosition = new Vector3(0, 0, 0);
-        steps[0].transform.localScale = new Vector3(1, 1, 1);
-        for (int i = 1; i < steps.GetLength(0); i++)
-        {
-            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + initialDistance * (steps[i - 1].transform.localScale.x - (1f - reductionOfSteps) / 2), 0);
-            steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - (1f - reductionOfSteps), steps[i - 1].transform.localScale.y - (1f - reductionOfSteps), 0);
-        }*/
-
-        //needs changes
         PlayerMovement();
     }
+
+    #endregion
+
+    #region Private Methods
 
     private void Update()
     {
         if (isGame && !isPause)
         {
+            //One Jump
+            if (isDoubleJump && Time.realtimeSinceStartup - timeForButton > cooldownForJumpButton)
+            {
+                AutomaticJump(1);
+                isDoubleJump = false;
+                animationTime = 1f;
+            }
+
             direction = directionMenuScript.Direction;
 
             LadderMovement();
@@ -167,15 +194,16 @@ public class GamePlayMenuScript : MonoBehaviour
 
     private void SpeedMovement(float coefficient = 10f)
     {
-        speed = Time.deltaTime * coefficient * 400;
-        /*if (speedDefault + (playerStep - 3) * 2 - speed < 0)
+        Debug.Log(speed);
+        //speed = Time.deltaTime * coefficient * speedDefault * 100;
+        if (speedDefault + (playerStep - 3) * 20 - speed < 0)
         {
-            speed -= Time.deltaTime * coefficient / 5f;
+            speed -= Time.deltaTime * coefficient * 20;
         }
         else
         {
-            speed += Time.deltaTime * coefficient / 5f;
-        }*/
+            speed += Time.deltaTime * coefficient * 20;
+        }
     }
 
     private float LadderScaleX(int input)
@@ -190,10 +218,7 @@ public class GamePlayMenuScript : MonoBehaviour
 
     private void LadderMovement()
     {
-        //добавить больше лестниц и на крайних задействовать полупрозрачность ещё 2 и прозрасность 0-50 50-100 у последней координата такая же
         float percent = -steps[0].transform.localPosition.y / (steps[0].transform.localScale.y * initialDistance - decreaseInHeight * initialDistance / 2); //либо убрать минус
-        //float percent = -steps[0].transform.localPosition.y / (((steps[0].transform.localScale.y) * initialDistance + (steps[0].transform.localScale.y + decreaseInHeight) * initialDistance) / 2);
-        Debug.Log(percent);
         for (int i = 0; i < steps.GetLength(0); i++)
         {
             steps[i].transform.localScale = new Vector3(1 - LadderScaleX(i) + (startInWidth - (i) * decreaseInWidth) * percent, 1 - decreaseInHeight * i + decreaseInHeight * percent, 1);
@@ -207,22 +232,21 @@ public class GamePlayMenuScript : MonoBehaviour
                 steps[i].GetComponent<StepScript>().SetTransparency(percent / 2);
             }
         }
-        //steps[0].transform.localPosition.y + (steps[0].transform.localScale.y * initialDistance + (steps[0].transform.localScale.y + decreaseInHeight) * initialDistance) / 2
-        //if (steps[1].transform.localPosition.z >= steps.GetLength(0))
         if (percent >= 1)
         {
             GameObject none = steps[0];
             for (int i = 1; i < steps.GetLength(0); i++)
             {
                 steps[i - 1] = steps[i];
-                //зет индекс по обратной
+                steps[i - 1].transform.localPosition = new Vector3(steps[i - 1].transform.localPosition.x, steps[i - 1].transform.localPosition.y, steps.GetLength(0) - i);
             }
             steps[steps.GetLength(0) - 1] = none;
             steps[steps.GetLength(0) - 1].transform.SetSiblingIndex(0);
-            //steps[steps.GetLength(0) - 1].GetComponent<StepScript>().SetTransparency(0f);
+            steps[steps.GetLength(0) - 1].GetComponent<StepScript>().SetTransparency(0f);
             steps[steps.GetLength(0) - 1].transform.localScale = new Vector3(steps[steps.GetLength(0) - 2].transform.localScale.x - (startInWidth - (steps.GetLength(0) - 1) * decreaseInWidth), steps[steps.GetLength(0) - 2].transform.localScale.y - decreaseInHeight, 0);
-            steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, steps[steps.GetLength(0) - 2].transform.localPosition.y + (steps[steps.GetLength(0) - 2].transform.localScale.y * initialDistance + steps[steps.GetLength(0) - 1].transform.localScale.y * initialDistance) / 2, steps.GetLength(0) - steps.GetLength(0) - 1);
-            //--------------------------------------------------------------------here
+            steps[steps.GetLength(0) - 1].transform.localPosition = new Vector3(0, steps[steps.GetLength(0) - 2].transform.localPosition.y + (steps[steps.GetLength(0) - 2].transform.localScale.y * initialDistance + steps[steps.GetLength(0) - 1].transform.localScale.y * initialDistance) / 2, 0);
+            playerStep--;
+            CreateLets(steps[steps.GetLength(0) - 1]);
         }
         /*for (int i = 0; i < steps.GetLength(0); i++)
         {
@@ -265,7 +289,7 @@ public class GamePlayMenuScript : MonoBehaviour
         stepFrom = steps[playerStep].transform;
         playerStep += numberOfStep;
         stepTo = steps[playerStep].transform;
-        playerPositionNew = playerPosition - Mathf.Tan(direction * 0.0174533f) * (stepTo.localPosition.y - stepFrom.localPosition.y) * 0.8f;
+        playerPositionNew = playerPosition - Mathf.Tan(direction * 0.0174533f) * (stepTo.localPosition.y - stepFrom.localPosition.y);
     }
 
     private void Jump()
@@ -276,13 +300,13 @@ public class GamePlayMenuScript : MonoBehaviour
             difference = (stepFrom.localScale.x - stepTo.localScale.x);
             interval = (playerPositionNew * stepTo.localScale.x - playerPosition * stepFrom.localScale.x);
             player.transform.localPosition = new Vector3(playerPosition * stepFrom.localScale.x + playerAnimationCurveX.Evaluate(currentTime) * interval, stepFrom.localPosition.y + playerAnimationCurveY.Evaluate(currentTime) * distance, player.transform.localPosition.z);
-            player.transform.localScale = new Vector3(stepFrom.localScale.x - playerAnimationCurveS.Evaluate(currentTime) * difference, stepFrom.localScale.y - playerAnimationCurveS.Evaluate(currentTime) * difference, stepTo.localScale.z);
+            player.transform.localScale = new Vector3(stepFrom.localScale.x - playerAnimationCurveS.Evaluate(currentTime) * difference, stepFrom.localScale.x - playerAnimationCurveS.Evaluate(currentTime) * difference, stepTo.localScale.x);
             currentTime += Time.deltaTime;
         }
         else
         {
             playerPosition = playerPositionNew;
-            animationTime = 1f; //mb
+            animationTime = 1f;
             currentTime = 0f;
             isJump = false;
         }
@@ -290,8 +314,7 @@ public class GamePlayMenuScript : MonoBehaviour
 
     void PlayerMovement()
     {
-        //scale steps = 0.8f and scale player = 1f
-        player.transform.localScale = new Vector3(steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.y, steps[playerStep].transform.localScale.z);
+        player.transform.localScale = new Vector3(steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.x);
         if (playerPosition > -200 && playerPosition < 200)
         {
             player.transform.localPosition = new Vector3(playerPosition * player.transform.localScale.x, steps[playerStep].transform.localPosition.y, steps[playerStep].transform.localPosition.z);
@@ -331,28 +354,5 @@ public class GamePlayMenuScript : MonoBehaviour
         }*/
     }
 
-    public void JumpButtonUp()
-    {
-        //изменить
-        if (Time.realtimeSinceStartup - timeForButton > cooldownForJumpButton)
-        {
-            if (!isJump)
-            {
-                animationTime = 2f; //mb
-                AutomaticJump(2);
-            }
-        }
-        else
-        {
-            if (!isJump)
-            {
-                AutomaticJump(1);
-            }
-        }
-    }
-
-    public void JumpButtonDown()
-    {
-        timeForButton = Time.realtimeSinceStartup;
-    }
+    #endregion
 }

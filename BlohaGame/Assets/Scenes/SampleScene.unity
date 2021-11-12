@@ -906,8 +906,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 150, y: 200}
+  m_AnchoredPosition: {x: 0, y: 240}
+  m_SizeDelta: {x: 300, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &64421215
 MonoBehaviour:
@@ -4779,7 +4779,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -226.12}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &469545104
@@ -6393,7 +6393,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   directionObject: {fileID: 1380735423}
   borderValue: 60
-  speed: 2
+  speed: 3
   acceleration: 5
 --- !u!1001 &701243223
 PrefabInstance:
@@ -15703,7 +15703,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1550407794
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18324,7 +18324,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -518.36}
+  m_AnchoredPosition: {x: 0, y: -744.48}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1824546785
@@ -18359,7 +18359,7 @@ MonoBehaviour:
   decreaseInHeight: 0.08
   decreaseInWidth: 0.01
   startInWidth: 0.125
-  speedDefault: 2
+  speedDefault: 4
   player: {fileID: 1550407793}
   playerStep: 3
   playerAnimationCurveX:
@@ -18438,8 +18438,7 @@ MonoBehaviour:
   directionObject: {fileID: 699559030}
   flaskObject: {fileID: 1361451435}
   healthObject: {fileID: 262524095}
-  cooldownForJumpButton: 0
-  timeForButton: 0
+  cooldownForJumpButton: 0.2
 --- !u!1 &1827696251
 GameObject:
   m_ObjectHideFlags: 0
@@ -20383,6 +20382,7 @@ GameObject:
   - component: {fileID: 2044050566}
   - component: {fileID: 2044050565}
   - component: {fileID: 2044050564}
+  - component: {fileID: 2044050567}
   m_Layer: 0
   m_Name: Jump
   m_TagString: Untagged
@@ -20452,7 +20452,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2044050565}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1824546785}
+        m_MethodName: JumpButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2044050565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20490,6 +20501,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044050562}
   m_CullTransparentMesh: 0
+--- !u!114 &2044050567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044050562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls: []
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!1 &2050902103
 GameObject:
   m_ObjectHideFlags: 0
