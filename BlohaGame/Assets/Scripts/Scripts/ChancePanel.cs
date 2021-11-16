@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class ChancePanel : MonoBehaviour
 {
+    [SerializeField] private GameObject mainCanvas = null;
     [SerializeField] private GameObject timeLine = null;
-    private MenuController menuController = null;
     private float currentTime = 0f;
     private bool isWork = false;
 
     public void StartWork()
     {
         isWork = true;
+        timeLine.transform.localScale = new Vector3(1, 1, 1);
+        currentTime = 0f;
     }
 
     public void EndWork()
@@ -26,11 +28,6 @@ public class ChancePanel : MonoBehaviour
         isWork = false;
     }
 
-    private void Start()
-    {
-        menuController = GameObject.Find("MenuCanvas").GetComponent<MenuController>();
-    }
-
     private void Update()
     {
         if (isWork)
@@ -43,7 +40,7 @@ public class ChancePanel : MonoBehaviour
             else
             {
                 isWork = false;
-                menuController.ChanceButton();
+                mainCanvas.GetComponent<MenuScript>().ToLosing();
             }
         }
     }

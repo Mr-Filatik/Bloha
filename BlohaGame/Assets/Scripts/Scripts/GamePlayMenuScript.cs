@@ -24,6 +24,7 @@ public class GamePlayMenuScript : MonoBehaviour
     [SerializeField] private AnimationCurve playerAnimationCurveS = null;
     private float playerPosition;
     private float playerPositionNew;
+    private int playerHealth;
 
     [Header("GameObjects")]
     [SerializeField] private GameObject menuCanvas = null;
@@ -74,6 +75,9 @@ public class GamePlayMenuScript : MonoBehaviour
                 steps[i].GetComponent<StepScript>().SetTransparency(0f);
             }
         }
+        playerHealth = 3;
+        healthObject.GetComponent<HealthController>().SetHealth(playerHealth);
+        playerPosition = 0;
     }
 
     public void GamePause()
@@ -90,6 +94,25 @@ public class GamePlayMenuScript : MonoBehaviour
     {
         isGame = false;
         isPause = false;
+        steps[0].transform.localPosition = new Vector3(0, 0, steps.GetLength(0));
+        steps[0].transform.localScale = new Vector3(1, 1, 1);
+        for (int i = 1; i < steps.GetLength(0); i++)
+        {
+            steps[i].transform.localScale = new Vector3(steps[i - 1].transform.localScale.x - (startInWidth - (i) * decreaseInWidth), steps[i - 1].transform.localScale.y - decreaseInHeight, 0);
+            steps[i].transform.localPosition = new Vector3(0, steps[i - 1].transform.localPosition.y + (steps[i - 1].transform.localScale.y * initialDistance + steps[i].transform.localScale.y * initialDistance) / 2, steps.GetLength(0) - i);
+            if (i == steps.GetLength(0) - 2)
+            {
+                steps[i].GetComponent<StepScript>().SetTransparency(0.5f);
+            }
+            if (i == steps.GetLength(0) - 1)
+            {
+                steps[i].GetComponent<StepScript>().SetTransparency(0f);
+            }
+        }
+        playerHealth = 3;
+        healthObject.GetComponent<HealthController>().SetHealth(playerHealth);
+        playerPosition = 0;
+        PlayerMovement();
     }
 
     public void JumpButton()
@@ -99,8 +122,11 @@ public class GamePlayMenuScript : MonoBehaviour
             if (Time.realtimeSinceStartup - timeForButton <= cooldownForJumpButton)
             {
                 isDoubleJump = false;
-                animationTime = 2f;
-                AutomaticJump(2);
+                if (flaskObject.GetComponent<FlaskScript>().Jump())
+                {
+                    animationTime = 2f;
+                    AutomaticJump(2);
+                }
             }
             else
             {
@@ -145,12 +171,13 @@ public class GamePlayMenuScript : MonoBehaviour
     {
         if (isGame && !isPause)
         {
-            //One Jump
+            //One Jump не работает после двойного
             if (isDoubleJump && Time.realtimeSinceStartup - timeForButton > cooldownForJumpButton)
             {
+                animationTime = 1f;
                 AutomaticJump(1);
                 isDoubleJump = false;
-                animationTime = 1f;
+                timeForButton = Time.realtimeSinceStartup;
             }
 
             direction = directionMenuScript.Direction;
@@ -171,6 +198,7 @@ public class GamePlayMenuScript : MonoBehaviour
             else
             {
                 PlayerMovement();
+                Debug.Log(playerPosition);
                 //куда он прыгнул есть ли там место из части
                 /*StepController stepController = steps[playerStep].GetComponent<StepController>();
                 StepPartState stepPartState = stepController.GetStepPartState(playerPosition);
@@ -315,30 +343,29 @@ public class GamePlayMenuScript : MonoBehaviour
     void PlayerMovement()
     {
         player.transform.localScale = new Vector3(steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.x, steps[playerStep].transform.localScale.x);
-        if (playerPosition > -200 && playerPosition < 200)
+        if (playerPosition > -412 && playerPosition < 412)
         {
             player.transform.localPosition = new Vector3(playerPosition * player.transform.localScale.x, steps[playerStep].transform.localPosition.y, steps[playerStep].transform.localPosition.z);
         }
         else
         {
-            //health.GetComponent<HealthController>().MinusHealth();
-            playerPosition = 0;
-            PlayerDead();
-            //падение
+             PlayerDead();
         }
     }
 
     void PlayerDead()
     {
-        Debug.Log("DEAD");
-        /*
-        health.GetComponent<HealthController>().MinusHealth();
+        healthObject.GetComponent<HealthController>().MinusHealth();
         playerHealth--;
+        playerPosition = 0; //изменить - ставить объект на место без препятствия
+        Debug.Log("DEAD");
+
         if (playerHealth <= 0) //or 1
         {
-            PauseGame();
-            ChancePanelOpen();
-        }*/
+            //PauseGame();
+            GamePause();
+            menuCanvas.GetComponent<MenuScript>().ToChance();
+        }
         /*if (playerHealth > 1) //or 0
         {
             health.GetComponent<HealthController>().MinusHealth();

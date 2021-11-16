@@ -55,7 +55,7 @@ public class HealthController : MonoBehaviour
             {
                 healths[i] = Instantiate(healthPrefab, gameObject.transform);
                 //change spawn coordinates here
-                healths[i].transform.localPosition = new Vector3(0f, 0f - i * distanceSpawn, 0f);
+                healths[i].transform.localPosition = new Vector3(0f + i * distanceSpawn, 0f, 0f);
                 healths[i].transform.localEulerAngles = new Vector3(0f, 0f, 0f);
             }
             ChangeHealth();

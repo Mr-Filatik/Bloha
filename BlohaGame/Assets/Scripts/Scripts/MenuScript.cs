@@ -16,7 +16,7 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private GameObject losingPanel = null; //losing
     [SerializeField] private GameObject chancePanel = null; //chance
     [SerializeField] private GameObject flaskPanel = null; //flask
-    [SerializeField] private GameObject healthPanel = null; //health
+    //[SerializeField] private GameObject healthPanel = null; //health
     [SerializeField] private GameObject directionPanel = null; //direction
     [SerializeField] private GameObject countdownPanel = null; //countdown
     [SerializeField] private GameObject gamePlayPanel = null; //gameplay
@@ -49,6 +49,7 @@ public class MenuScript : MonoBehaviour
 
         directionPanel.GetComponent<DirectionMenuScript>().GameEnd();
         gamePlayPanel.GetComponent<GamePlayMenuScript>().GameEnd();
+        flaskPanel.GetComponent<FlaskScript>().GameEnd();
     }
 
     public void ToSettings()
@@ -80,15 +81,16 @@ public class MenuScript : MonoBehaviour
 
         directionPanel.GetComponent<DirectionMenuScript>().GameStart();
         gamePlayPanel.GetComponent<GamePlayMenuScript>().GameStart();
+        flaskPanel.GetComponent<FlaskScript>().GameStart();
     }
 
     public void ToGame()
     {
-        openObject = new PanelClass[4];
+        openObject = new PanelClass[3];
         openObject[0] = new PanelClass(gamePanel, startUpPosition, endUpPosition);
-        openObject[1] = new PanelClass(flaskPanel, startRightPosition, endRightPosition);
-        openObject[2] = new PanelClass(healthPanel, startLeftPosition, endLeftPosition);
-        openObject[3] = new PanelClass(directionPanel, startDownPosition, endDownPosition);
+        openObject[1] = new PanelClass(flaskPanel, startLeftPosition, endLeftPosition);
+        //openObject[2] = new PanelClass(healthPanel, startLeftPosition, endLeftPosition);
+        openObject[2] = new PanelClass(directionPanel, startDownPosition, endDownPosition);
         SetActiveGameObject(openObject);
     }
 
@@ -100,6 +102,7 @@ public class MenuScript : MonoBehaviour
 
         directionPanel.GetComponent<DirectionMenuScript>().GamePause();
         gamePlayPanel.GetComponent<GamePlayMenuScript>().GamePause();
+        flaskPanel.GetComponent<FlaskScript>().GamePause();
     }
 
     public void ToLosing()
@@ -107,6 +110,10 @@ public class MenuScript : MonoBehaviour
         openObject = new PanelClass[1];
         openObject[0] = new PanelClass(losingPanel, startDownPosition, endDownPosition);
         SetActiveGameObject(openObject);
+
+        directionPanel.GetComponent<DirectionMenuScript>().GameEnd();
+        gamePlayPanel.GetComponent<GamePlayMenuScript>().GameEnd();
+        flaskPanel.GetComponent<FlaskScript>().GameEnd();
     }
 
     public void ToChance()
@@ -129,7 +136,7 @@ public class MenuScript : MonoBehaviour
         pausePanel.SetActive(false);
         losingPanel.SetActive(false);
         flaskPanel.SetActive(false);
-        healthPanel.SetActive(false);
+        //healthPanel.SetActive(false);
         directionPanel.SetActive(false);
         countdownPanel.SetActive(false);
 
@@ -146,8 +153,8 @@ public class MenuScript : MonoBehaviour
         pausePanel.transform.localPosition = startDownPosition;
         losingPanel.transform.localPosition = startDownPosition;
         gamePanel.transform.localPosition = startUpPosition;
-        flaskPanel.transform.localPosition = startRightPosition;
-        healthPanel.transform.localPosition = startLeftPosition;
+        flaskPanel.transform.localPosition = startLeftPosition;
+        //healthPanel.transform.localPosition = startLeftPosition;
         directionPanel.transform.localPosition = startDownPosition;
         countdownPanel.transform.localPosition = endDownPosition;
 
@@ -182,11 +189,16 @@ public class MenuScript : MonoBehaviour
     {
         if (currentTimeForPanel >= panelAnimationY.keys[panelAnimationY.keys.Length - 1].time)
         {
-            if (openObject.GetLength(0) > 3)
+            if (openObject[0].gameObject == gamePanel)
             {
                 directionPanel.GetComponent<DirectionMenuScript>().GameContinue();
                 gamePlayPanel.GetComponent<GamePlayMenuScript>().GameContinue();
+                flaskPanel.GetComponent<FlaskScript>().GameContinue();
             } //------------------------------------------------------------------------------bad for start
+            if (openObject[0].gameObject == chancePanel)
+            {
+                chancePanel.GetComponent<ChancePanel>().StartWork();
+            }
             closeObject = openObject;
             openObject = null;
             foreach (PanelClass item in gameObject)
