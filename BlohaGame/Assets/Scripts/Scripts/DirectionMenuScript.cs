@@ -40,6 +40,11 @@ public class DirectionMenuScript : MonoBehaviour
         isPause = false;
     }
 
+    private void Awake()
+    {
+        (directionObject.transform as RectTransform).position = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
+    }
+
     private void Update()
     {
         if (isGame && !isPause)
