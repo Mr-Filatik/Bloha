@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuScript : MonoBehaviour
+/*public class MenuScript : MonoBehaviour
 {
     [Header("Panels")]
     [SerializeField] private GameObject menuPanel = null; //main menu
@@ -273,3 +273,4 @@ public class PanelClass
         this.vectorEnd = vectorEnd;
     }
 }
+*/

@@ -31,7 +31,7 @@ public class GamePlayMenuScript : MonoBehaviour
     [SerializeField] private GameObject directionObject = null;
     [SerializeField] private GameObject flaskObject = null;
     [SerializeField] private GameObject healthObject = null;
-    private MenuScript menuScript = null;
+    //private MenuScript menuScript = null;
     private DirectionMenuScript directionMenuScript = null;
     //private FlaskMenuScript flaskMenuScript = null;
     //private HealthMenuScript healthMenuScript = null;
@@ -154,7 +154,7 @@ public class GamePlayMenuScript : MonoBehaviour
         interval = 0f;
         timeForButton = 0f;
         isDoubleJump = false;
-        menuScript = menuCanvas.GetComponent<MenuScript>();
+        //menuScript = menuCanvas.GetComponent<MenuScript>();
         directionMenuScript = directionObject.GetComponent<DirectionMenuScript>();
         //flaskMenuScript = flaskObject.GetComponent<FlaskMenuScript>();
         //healthMenuScript = healthObject.GetComponent<HealthMenuScript>();
@@ -364,7 +364,7 @@ public class GamePlayMenuScript : MonoBehaviour
         {
             //PauseGame();
             GamePause();
-            menuCanvas.GetComponent<MenuScript>().ToChance();
+            //menuCanvas.GetComponent<MenuScript>().ToChance();
         }
         /*if (playerHealth > 1) //or 0
         {

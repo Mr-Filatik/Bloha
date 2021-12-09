@@ -115,7 +115,6 @@ public class BackgroundController : MonoBehaviour
             }
             else
             {
-                Debug.Log(1 - imageAnimationTransparency.Evaluate(currentTime));
                 frontImage.color = new Color(1, 1, 1, 1 - (imageAnimationTransparency.Evaluate(currentTime)));
                 currentTime += Time.deltaTime;
             }

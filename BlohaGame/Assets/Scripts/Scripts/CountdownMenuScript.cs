@@ -44,7 +44,7 @@ public class CountdownMenuScript : MonoBehaviour
                     imageThree.GetComponent<Image>().color = new Color(1, 1, 1, 0);
                     visibleObject = null;
                     isGame = false;
-                    mainMenu.GetComponent<MenuScript>().ToGame();
+                    //mainMenu.GetComponent<MenuScript>().ToGame();
                 }
                 if (visibleObject == imageTwo)
                 {

@@ -40,7 +40,7 @@ public class ChancePanel : MonoBehaviour
             else
             {
                 isWork = false;
-                mainCanvas.GetComponent<MenuScript>().ToLosing();
+                //mainCanvas.GetComponent<MenuScript>().ToLosing();
             }
         }
     }
