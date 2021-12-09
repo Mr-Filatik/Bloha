@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuController : MonoBehaviour
+public class Menu1Controller : MonoBehaviour
 {
     [SerializeField] private GameObject chancePanel = null;
     [SerializeField] private GameObject losingPanel = null;

@@ -71,13 +71,13 @@ public class BackgroundController : MonoBehaviour
         backImage.color = new Color(1, 1, 1, 1);
         if (Screen.height / Screen.width > sizeImages.y / sizeImages.x)
         {
-            backImage.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.width * (sizeImages.y / sizeImages.x));
-            frontImage.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.width * (sizeImages.y / sizeImages.x));
+            backImage.rectTransform.sizeDelta = new Vector2(Screen.height * (sizeImages.x / sizeImages.y), Screen.height);
+            frontImage.rectTransform.sizeDelta = new Vector2(Screen.height * (sizeImages.x / sizeImages.y), Screen.height);
         }
         else
         {
-            backImage.rectTransform.sizeDelta = new Vector2(Screen.height * (sizeImages.x / sizeImages.y), Screen.height);
-            frontImage.rectTransform.sizeDelta = new Vector2(Screen.height * (sizeImages.x / sizeImages.y), Screen.height);
+            backImage.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.width * (sizeImages.y / sizeImages.x));
+            frontImage.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.width * (sizeImages.y / sizeImages.x));
         }
         backImage.sprite = null;
         if (isRealyTimeOfDay)

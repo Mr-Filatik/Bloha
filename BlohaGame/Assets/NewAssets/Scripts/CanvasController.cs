@@ -166,7 +166,7 @@ public class CanvasController : MonoBehaviour
         //countdownPanel.transform.localPosition = endDownPosition;
 
         openObject = new PanelClass[1];
-        openObject[0] = new PanelClass(menuPanel, startDownPosition, endDownPosition);
+        openObject[0] = new PanelClass(menuPanel, new Vector3(0f, -Screen.height, 0f), Vector3.zero);
         closeObject = null;
 
         currentTime = 0f;
@@ -225,10 +225,7 @@ public class CanvasController : MonoBehaviour
         if (currentTime <= 0)
         {
             currentTime = 0f;
-            foreach (PanelClass item in closeObject)
-            {
-                item.gameObject.SetActive(false);
-            }
+            SetActiveGameObjects(closeObject, false);
             closeObject = null;
 
             //if (openObject[0].gameObject == countdownPanel)
