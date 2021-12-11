@@ -5,6 +5,8 @@ using UnityEngine;
 public class CanvasController : MonoBehaviour
 {
     [Header("Panels")]
+    [SerializeField] private GameObject zeroPanel = null;
+    [SerializeField] private GameObject namePanel = null;
     [SerializeField] private GameObject menuPanel = null;
     [SerializeField] private GameObject shopPanel = null;
     [SerializeField] private GameObject settingsPanel = null;
@@ -39,11 +41,18 @@ public class CanvasController : MonoBehaviour
     private PanelClass[] openObject = null;
     private float currentTime;
 
+    public void AAA()
+    {
+        Debug.Log("check");
+    }
+
     public void ToMenu()
     {
-        openObject = new PanelClass[1];
+        openObject = new PanelClass[2];
         openObject[0] = new PanelClass(menuPanel, new Vector3(0f, -Screen.height, 0f), Vector3.zero);
+        openObject[1] = new PanelClass(namePanel, new Vector3(0f, Screen.height, 0f), Vector3.zero);
         SetActiveGameObjects(openObject, true);
+        zeroPanel.SetActive(true);
 
         /*directionPanel.GetComponent<DirectionMenuScript>().GameEnd();
         gamePlayPanel.GetComponent<GamePlayMenuScript>().GameEnd();
@@ -55,6 +64,7 @@ public class CanvasController : MonoBehaviour
         openObject = new PanelClass[1];
         openObject[0] = new PanelClass(settingsPanel, new Vector3(0f, -Screen.height, 0f), Vector3.zero);
         SetActiveGameObjects(openObject, true);
+        zeroPanel.SetActive(true);
     }
 
     public void ToShop()
@@ -62,6 +72,7 @@ public class CanvasController : MonoBehaviour
         openObject = new PanelClass[1];
         openObject[0] = new PanelClass(shopPanel, new Vector3(0f, -Screen.height, 0f), Vector3.zero);
         SetActiveGameObjects(openObject, true);
+        zeroPanel.SetActive(true);
     }
 
     public void ToAchievements()
@@ -69,6 +80,7 @@ public class CanvasController : MonoBehaviour
         openObject = new PanelClass[1];
         openObject[0] = new PanelClass(achievementsPanel, new Vector3(0f, -Screen.height, 0f), Vector3.zero);
         SetActiveGameObjects(openObject, true);
+        zeroPanel.SetActive(true);
     }
 
     //public void ToInfo()
@@ -130,9 +142,9 @@ public class CanvasController : MonoBehaviour
 
     private void Awake()
     {
-        Screen.orientation = ScreenOrientation.Portrait; // perenesti
-
+        zeroPanel.SetActive(true);
         menuPanel.SetActive(true);
+        namePanel.SetActive(true);
         shopPanel.SetActive(false);
         settingsPanel.SetActive(false);
         achievementsPanel.SetActive(false);
@@ -146,15 +158,12 @@ public class CanvasController : MonoBehaviour
         //directionPanel.SetActive(false);
         //countdownPanel.SetActive(false);
 
-        if (Screen.height / Screen.width > 16 / 9)
-        {
-
-        }
 
         menuPanel.transform.localPosition = new Vector3(0f, -Screen.height, 0f);
         shopPanel.transform.localPosition = new Vector3(0f, -Screen.height, 0f);
         settingsPanel.transform.localPosition = new Vector3(0f, -Screen.height, 0f);
         achievementsPanel.transform.localPosition = new Vector3(0f, -Screen.height, 0f);
+        namePanel.transform.localPosition = new Vector3(0f, Screen.height, 0f);
         //infoPanel.transform.localPosition = startDownPosition;
         //chancePanel.transform.localPosition = startDownPosition;
         //pausePanel.transform.localPosition = startDownPosition;
@@ -165,8 +174,9 @@ public class CanvasController : MonoBehaviour
         //directionPanel.transform.localPosition = startDownPosition;
         //countdownPanel.transform.localPosition = endDownPosition;
 
-        openObject = new PanelClass[1];
+        openObject = new PanelClass[2];
         openObject[0] = new PanelClass(menuPanel, new Vector3(0f, -Screen.height, 0f), Vector3.zero);
+        openObject[1] = new PanelClass(namePanel, new Vector3(0f, Screen.height, 0f), Vector3.zero);
         closeObject = null;
 
         currentTime = 0f;
@@ -208,6 +218,7 @@ public class CanvasController : MonoBehaviour
                 item.gameObject.transform.localPosition = item.vectorEnd;
             }
             currentTime = 1f;
+            zeroPanel.SetActive(false);
         }
         else
         {
