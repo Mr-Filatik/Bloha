@@ -12,30 +12,19 @@ public class CanvasController : MonoBehaviour
     [SerializeField] private GameObject settingsPanel = null;
     [SerializeField] private GameObject achievementsPanel = null;
     //[SerializeField] private GameObject infoPanel = null;
-    //[SerializeField] private GameObject gamePanel = null;
-    //[SerializeField] private GameObject pausePanel = null;
-    //[SerializeField] private GameObject losingPanel = null;
-    //[SerializeField] private GameObject chancePanel = null;
-    //[SerializeField] private GameObject flaskPanel = null;
-    //[SerializeField] private GameObject healthPanel = null;
-    //[SerializeField] private GameObject directionPanel = null;
-    //[SerializeField] private GameObject countdownPanel = null;
+    //[SerializeField] private GameObject gamePanel = null;//
+    //[SerializeField] private GameObject pausePanel = null;//
+    //[SerializeField] private GameObject losingPanel = null;//
+    //[SerializeField] private GameObject chancePanel = null;//
+    [SerializeField] private GameObject flaskPanel = null;
+    [SerializeField] private GameObject directionPanel = null;
+    [SerializeField] private GameObject countdownPanel = null;
     //[SerializeField] private GameObject gamePlayPanel = null;
 
     [Header("Panels animation")]
     [SerializeField] private AnimationCurve panelAnimationX = null;
     [SerializeField] private AnimationCurve panelAnimationY = null;
     [SerializeField] private AnimationCurve panelAnimationScale = null;
-
-    [Header("Panels position")]
-    [SerializeField] private Vector3 startDownPosition = Vector3.zero;
-    [SerializeField] private Vector3 endDownPosition = Vector3.zero;
-    [SerializeField] private Vector3 startUpPosition = Vector3.zero;
-    [SerializeField] private Vector3 endUpPosition = Vector3.zero;
-    [SerializeField] private Vector3 startLeftPosition = Vector3.zero;
-    [SerializeField] private Vector3 endLeftPosition = Vector3.zero;
-    [SerializeField] private Vector3 startRightPosition = Vector3.zero;
-    [SerializeField] private Vector3 endRightPosition = Vector3.zero;
 
     private PanelClass[] closeObject = null;
     private PanelClass[] openObject = null;
@@ -90,16 +79,14 @@ public class CanvasController : MonoBehaviour
     //    SetActiveGameObject(openObject);
     //}
 
-    //public void ToPlay()
-    //{
-    //    openObject = new PanelClass[1];
-    //    openObject[0] = new PanelClass(countdownPanel, endUpPosition, endUpPosition);
-    //    SetActiveGameObject(openObject);
-
-    //    directionPanel.GetComponent<DirectionMenuScript>().GameStart();
-    //    gamePlayPanel.GetComponent<GamePlayMenuScript>().GameStart();
-    //    flaskPanel.GetComponent<FlaskScript>().GameStart();
-    //}
+    public void ToPlay()
+    {
+        openObject = new PanelClass[2];
+        openObject[0] = new PanelClass(directionPanel, new Vector3(0f, -Screen.height, 0f), Vector3.zero);
+        openObject[1] = new PanelClass(flaskPanel, new Vector3(-Screen.width, 0f, 0f), Vector3.zero);
+        SetActiveGameObjects(openObject, true);
+        zeroPanel.SetActive(true);
+    }
 
     //public void ToGame()
     //{
@@ -148,15 +135,15 @@ public class CanvasController : MonoBehaviour
         shopPanel.SetActive(false);
         settingsPanel.SetActive(false);
         achievementsPanel.SetActive(false);
+        countdownPanel.SetActive(false);
+        directionPanel.SetActive(false);
         //infoPanel.SetActive(false);
         //gamePanel.SetActive(false);
         //chancePanel.SetActive(false);
         //pausePanel.SetActive(false);
         //losingPanel.SetActive(false);
-        //flaskPanel.SetActive(false);
+        flaskPanel.SetActive(false);
         //healthPanel.SetActive(false);
-        //directionPanel.SetActive(false);
-        //countdownPanel.SetActive(false);
 
 
         menuPanel.transform.localPosition = new Vector3(0f, -Screen.height, 0f);
@@ -164,15 +151,9 @@ public class CanvasController : MonoBehaviour
         settingsPanel.transform.localPosition = new Vector3(0f, -Screen.height, 0f);
         achievementsPanel.transform.localPosition = new Vector3(0f, -Screen.height, 0f);
         namePanel.transform.localPosition = new Vector3(0f, Screen.height, 0f);
-        //infoPanel.transform.localPosition = startDownPosition;
-        //chancePanel.transform.localPosition = startDownPosition;
-        //pausePanel.transform.localPosition = startDownPosition;
-        //losingPanel.transform.localPosition = startDownPosition;
-        //gamePanel.transform.localPosition = startUpPosition;
-        //flaskPanel.transform.localPosition = startLeftPosition;
-        //healthPanel.transform.localPosition = startLeftPosition;
-        //directionPanel.transform.localPosition = startDownPosition;
-        //countdownPanel.transform.localPosition = endDownPosition;
+        directionPanel.transform.localPosition = new Vector3(0f, -Screen.height, 0f);
+        countdownPanel.transform.localPosition = new Vector3(0f, 0f, 0f);
+        flaskPanel.transform.localPosition = new Vector3(-Screen.width, 0f, 0f);
 
         openObject = new PanelClass[2];
         openObject[0] = new PanelClass(menuPanel, new Vector3(0f, -Screen.height, 0f), Vector3.zero);
@@ -201,6 +182,11 @@ public class CanvasController : MonoBehaviour
     {
         if (currentTime >= panelAnimationY.keys[panelAnimationY.keys.Length - 1].time)
         {
+            if (openObject[0].gameObject == directionPanel)
+            {
+                //после открытия панелей начала игры, вызывается счетчик начала
+                countdownPanel.GetComponent<CountdownController>().gameObject.SetActive(true);
+            }
             //if (openObject[0].gameObject == gamePanel)
             //{
             //    directionPanel.GetComponent<DirectionMenuScript>().GameContinue();
