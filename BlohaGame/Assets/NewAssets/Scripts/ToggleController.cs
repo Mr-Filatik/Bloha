@@ -2,24 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class ToggleController : MonoBehaviour
 {
     #region SerializeField Variables
 
-    [SerializeField] private Sprite toggleOn = null;
-    [SerializeField] private Sprite toggleOff = null;
+    [SerializeField] private Text text = null;
+    [SerializeField] private Image image = null;
 
     #endregion
 
     #region Public Properties
 
-
+    //public bool State => state;
 
     #endregion
 
     #region Private Variables
-
+    
+    private bool state;
     private InitController initData = null;
 
     #endregion
@@ -28,7 +30,18 @@ public class ToggleController : MonoBehaviour
 
     public void ChangeState()
     {
-        initData.SetToggleState(gameObject.name, gameObject.GetComponent<Toggle>().isOn);
+        if (state)
+        {
+            image.transform.DOMoveX(-100f + gameObject.transform.position.x, 0.5f);
+            image.DOColor(Color.red, 0.5f);
+        }
+        else
+        {
+            image.transform.DOMoveX(100f + gameObject.transform.position.x, 0.5f);
+            image.DOColor(Color.green, 0.5f);
+        }
+        state = !state;
+        initData.SetToggleState(name, state);
     }
 
     #endregion
@@ -38,9 +51,18 @@ public class ToggleController : MonoBehaviour
     private void Awake()
     {
         initData = GameObject.Find("Init").GetComponent<InitController>();
-        gameObject.GetComponent<Toggle>().isOn = initData.GetToggleState(gameObject.name);
-        gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = initData.GetText(gameObject.name);
+        text.text = initData.GetText(name);
+        state = initData.GetToggleState(name);
+        if (state)
+        {
+            image.transform.localPosition = new Vector3(100f, 0f, 0f);
+            image.color = Color.green;
+        }
+        else
+        {
+            image.transform.localPosition = new Vector3(-100f, 0f, 0f);
+            image.color = Color.red;
+        }
     }
-
     #endregion
 }

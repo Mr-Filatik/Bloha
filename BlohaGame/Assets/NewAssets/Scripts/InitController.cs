@@ -126,7 +126,7 @@ public class InitController : MonoBehaviour
     public void DisabledAds()
     {
         adsDisabled = true;
-        settingsController.ChangeStatus();
+        //settingsController.ChangeStatus();
     }
 
     public bool AdsIsDisabled()
