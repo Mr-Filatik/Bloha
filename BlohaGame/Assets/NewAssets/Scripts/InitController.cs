@@ -117,12 +117,16 @@ public class InitController : MonoBehaviour
         {
             switch (Application.systemLanguage)
             {
-                case SystemLanguage.Russian: PlayerPrefs.SetString("Language", "РУССКИЙ"); break;
+                //case SystemLanguage.Russian: PlayerPrefs.SetString("Language", "РУССКИЙ"); break;
                 default: PlayerPrefs.SetString("Language", "ENGLISH"); break;
             }
         }
     }
 
+    public string[] GetLanguages()
+    {
+        return new string[] { "ENGLISH", "РУССКИЙ" };
+    }
 
     //----------------------ADS
     private bool adsDisabled = false;

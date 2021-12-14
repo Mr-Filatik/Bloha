@@ -8,7 +8,7 @@ public class SettingsController : MonoBehaviour
     #region SerializeField Variables
 
     [SerializeField] private GameObject buttons = null;
-    [SerializeField] private GameObject toggles = null;
+    [SerializeField] private GameObject buttonsFixed = null;
     [SerializeField] private GameObject background = null;
 
     #endregion
@@ -46,32 +46,25 @@ public class SettingsController : MonoBehaviour
         float width = ((int)(Screen.width * 0.8f) / 100) * 100f;
         initData = GameObject.Find("Init").GetComponent<InitController>();
 
+        int number = buttons.transform.childCount;
+
         image = background.transform.GetChild(0).gameObject.GetComponent<Image>();
+        image.transform.localScale = new Vector3(ratio, ratio, ratio);
         image.transform.localPosition = new Vector3(0f, 0f, 0f);
-        (image.transform as RectTransform).sizeDelta = new Vector2(Screen.width * 0.8f, Screen.height * 0.8f);
+        //(image.transform as RectTransform).sizeDelta = new Vector2(Screen.width * 0.8f, Screen.height * 0.8f);
+        (image.transform as RectTransform).sizeDelta = new Vector2(900f, 1600f);
         image.color = backgroundColor;
 
-        //button = buttons.transform.GetChild(0).gameObject.GetComponent<Button>();
-        //button.transform.localScale = new Vector3(ratio, ratio, ratio);
-        //button.transform.localPosition = new Vector3(-width / 2f + sizeElements * ratio / 2f, height / 2f - sizeElements * ratio / 2f, 0f);
-        //button = buttons.transform.GetChild(1).gameObject.GetComponent<Button>();
-        //button.transform.localScale = new Vector3(ratio, ratio, ratio);
-        //if (initData.AdsIsDisabled())
-        //{
-        //    button.transform.localPosition = new Vector3(-0f, -height, 0f);
-        //}
-        //else
-        //{
-        //    button.transform.localPosition = new Vector3(-0f, -height / 2f + 150f * ratio * 1f, 0f);
-        //}
-
-        int number = buttons.transform.childCount;
+        button = buttonsFixed.transform.GetChild(0).gameObject.GetComponent<Button>();
+        button.transform.localScale = new Vector3(ratio, ratio, ratio);
+        //button.transform.localPosition = new Vector3(-width / 2f + 100f * ratio, height / 2f - 100f * ratio, 0f);
+        button.transform.localPosition = new Vector3(-900 / 2f + 100f * ratio, 1600 / 2f - 100f * ratio, 0f);
 
         for (int i = 0; i < number; i++)
         {
             element = buttons.transform.GetChild(i).gameObject;
             element.transform.localScale = new Vector3(ratio, ratio, ratio);
-            element.transform.localPosition = new Vector3(0f, height / 2f - 250f * ratio * i, 0f);
+            element.transform.localPosition = new Vector3(0f, height / 2f - 250f * ratio * (i + 1), 0f);
         }
         //backImage.rectTransform.sizeDelta = new Vector2(Screen.height * (sizeImages.x / sizeImages.y), Screen.height);
         //centers.transform.GetChild(0).gameObject;
