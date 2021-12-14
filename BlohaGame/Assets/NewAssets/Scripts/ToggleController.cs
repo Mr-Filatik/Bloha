@@ -23,6 +23,8 @@ public class ToggleController : MonoBehaviour
     
     private bool state;
     private InitController initData = null;
+    private Color trueColor = Color.green;
+    private Color falseColor = Color.red;
 
     #endregion
 
@@ -33,12 +35,12 @@ public class ToggleController : MonoBehaviour
         if (state)
         {
             image.transform.DOMoveX(-100f + gameObject.transform.position.x, 0.5f);
-            image.DOColor(Color.red, 0.5f);
+            image.DOColor(falseColor, 0.5f);
         }
         else
         {
             image.transform.DOMoveX(100f + gameObject.transform.position.x, 0.5f);
-            image.DOColor(Color.green, 0.5f);
+            image.DOColor(trueColor, 0.5f);
         }
         state = !state;
         initData.SetToggleState(name, state);
@@ -56,12 +58,12 @@ public class ToggleController : MonoBehaviour
         if (state)
         {
             image.transform.localPosition = new Vector3(100f, 0f, 0f);
-            image.color = Color.green;
+            image.color = trueColor;
         }
         else
         {
             image.transform.localPosition = new Vector3(-100f, 0f, 0f);
-            image.color = Color.red;
+            image.color = falseColor;
         }
     }
     #endregion

@@ -39,7 +39,7 @@ public class InitController : MonoBehaviour
         }
         else
         {
-            PlayerPrefs.SetString(name, "false");
+            PlayerPrefs.SetString(name, "true"); //поставил так
             return false;
         }
     }
@@ -59,7 +59,7 @@ public class InitController : MonoBehaviour
         }
         else
         {
-            PlayerPrefs.SetString(name, "false");
+            PlayerPrefs.SetString(name, "true"); //поставил так
         }
     }
 
@@ -72,7 +72,9 @@ public class InitController : MonoBehaviour
             if (name == "Music") return "MUSIC";
             if (name == "Vibro") return "VIBRO";
             if (name == "Language") return "LANGUAGE";
-            if (name == "NoAds") return "NO ADS";
+            if (name == "Ads") return "ADS";
+            if (name == "Disable") return "DISABLE";
+            if (name == "Disabled") return "DISABLED";
         }
         if (language == "РУССКИЙ")
         {
@@ -80,7 +82,9 @@ public class InitController : MonoBehaviour
             if (name == "Music") return "МУЗЫКА";
             if (name == "Vibro") return "ВИБРАЦИЯ";
             if (name == "Language") return "ЯЗЫК";
-            if (name == "NoAds") return "БЕЗ РЕКЛАМЫ";
+            if (name == "Ads") return "РЕКЛАМА";
+            if (name == "Disable") return "ОТКЛЮЧИТЬ";
+            if (name == "Disabled") return "ОТКЛЮЧЕНО";
         }
         return "NONE";
     }

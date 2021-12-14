@@ -7,7 +7,8 @@ public class ButtonController : MonoBehaviour
 {
     #region SerializeField Variables
 
-
+    [SerializeField] private Text text = null;
+    [SerializeField] private Button button = null;
 
     #endregion
 
@@ -19,13 +20,32 @@ public class ButtonController : MonoBehaviour
 
     #region Private Variables
 
+    private bool state;
     private InitController initData = null;
+    private Color trueColor = Color.green;
+    private Color falseColor = Color.red;
 
     #endregion
 
     #region Public Methods
 
-
+    public void ChangeState()
+    {
+        if (state)
+        {
+            button.interactable = false;
+            button.gameObject.GetComponent<Image>().color = falseColor;
+            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disabled");
+        }
+        else
+        {
+            button.interactable = true;
+            button.gameObject.GetComponent<Image>().color = trueColor;
+            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disable");
+        }
+        state = !state;
+        initData.SetToggleState(name, state);
+    }
 
     #endregion
 
@@ -34,10 +54,20 @@ public class ButtonController : MonoBehaviour
     private void Awake()
     {
         initData = GameObject.Find("Init").GetComponent<InitController>();
-        //gameObject.GetComponent<Toggle>().isOn = initData.GetToggleState(gameObject.name);
-        Text text = gameObject.transform.GetChild(0).gameObject.GetComponent<Text>();
-        //добавить изменение размера текста в зависимости от количества символов
-        text.text = initData.GetText(gameObject.name);
+        text.text = initData.GetText(name);
+        state = initData.GetToggleState(name);
+        if (state)
+        {
+            button.interactable = true;
+            button.gameObject.GetComponent<Image>().color = trueColor;
+            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disable");
+        }
+        else
+        {
+            button.interactable = false;
+            button.gameObject.GetComponent<Image>().color = falseColor;
+            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disabled");
+        }
     }
 
     #endregion
