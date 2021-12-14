@@ -31,20 +31,19 @@ public class ButtonController : MonoBehaviour
 
     public void ChangeState()
     {
-        if (state)
+        if (state)//перенести в подтверждение
         {
             button.interactable = false;
-            button.gameObject.GetComponent<Image>().color = falseColor;
-            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disabled");
-        }
-        else
-        {
-            button.interactable = true;
             button.gameObject.GetComponent<Image>().color = trueColor;
-            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disable");
+            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disabled");
         }
         state = !state;
         initData.SetToggleState(name, state);
+    }
+
+    public void ChangeStateConfirm()
+    {
+
     }
 
     #endregion
@@ -59,13 +58,13 @@ public class ButtonController : MonoBehaviour
         if (state)
         {
             button.interactable = true;
-            button.gameObject.GetComponent<Image>().color = trueColor;
+            button.gameObject.GetComponent<Image>().color = falseColor;
             button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disable");
         }
         else
         {
             button.interactable = false;
-            button.gameObject.GetComponent<Image>().color = falseColor;
+            button.gameObject.GetComponent<Image>().color = trueColor;
             button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disabled");
         }
     }

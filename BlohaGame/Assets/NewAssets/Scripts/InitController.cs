@@ -39,8 +39,8 @@ public class InitController : MonoBehaviour
         }
         else
         {
-            PlayerPrefs.SetString(name, "true"); //поставил так
-            return false;
+            PlayerPrefs.SetString(name, "true");
+            return true;
         }
     }
 
@@ -59,7 +59,7 @@ public class InitController : MonoBehaviour
         }
         else
         {
-            PlayerPrefs.SetString(name, "true"); //поставил так
+            PlayerPrefs.SetString(name, "true");
         }
     }
 

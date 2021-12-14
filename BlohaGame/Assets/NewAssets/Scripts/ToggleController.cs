@@ -34,12 +34,12 @@ public class ToggleController : MonoBehaviour
     {
         if (state)
         {
-            image.transform.DOMoveX(-100f + gameObject.transform.position.x, 0.5f);
+            image.transform.DOMoveX(-100f * gameObject.transform.localScale.x + gameObject.transform.position.x, 0.5f);
             image.DOColor(falseColor, 0.5f);
         }
         else
         {
-            image.transform.DOMoveX(100f + gameObject.transform.position.x, 0.5f);
+            image.transform.DOMoveX(100f * gameObject.transform.localScale.x + gameObject.transform.position.x, 0.5f);
             image.DOColor(trueColor, 0.5f);
         }
         state = !state;
