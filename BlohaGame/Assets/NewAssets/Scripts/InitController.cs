@@ -121,6 +121,7 @@ public class InitController : MonoBehaviour
                 default: PlayerPrefs.SetString("Language", "ENGLISH"); break;
             }
         }
+        //добавить вызов для смены языка всем кнопкам один метод на всех панелях, отдельный скрипт
     }
 
     public string[] GetLanguages()
