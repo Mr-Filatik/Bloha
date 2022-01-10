@@ -46,6 +46,8 @@ public class ToggleController : MonoBehaviour
         initData.SetToggleState(name, state);
     }
 
+    
+
     #endregion
 
     #region Private Methods
