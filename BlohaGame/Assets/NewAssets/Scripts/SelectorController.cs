@@ -87,6 +87,8 @@ public class SelectorController : MonoBehaviour
         {
             saveButton.interactable = false;
         }
+
+        LanguageEventManager.ChangeLanguage();
     }
 
     #endregion
@@ -96,7 +98,11 @@ public class SelectorController : MonoBehaviour
     private void Awake()
     {
         initData = GameObject.Find("Init").GetComponent<InitController>();
-        text.text = initData.GetText(name);
+
+        LanguageEventManager.OnChangeLanguage.AddListener(ChangeLanguage);
+
+        ChangeLanguage();
+
         states = initData.GetLanguages();
         for (int i = 0; i < states.Length; i++)
         {
@@ -123,6 +129,11 @@ public class SelectorController : MonoBehaviour
             rightButton.interactable = true;
         }
         saveButton.interactable = false;
+    }
+
+    private void ChangeLanguage()
+    {
+        text.text = initData.GetText(name);
     }
     #endregion
 }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8ee015cfd63f38941a5d987f69ec5336
+guid: 2f0a8804f63df35468190a0985c8ec33
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Bebas Neue
+  fontName: Oswald
   fontNames:
-  - Bebas Neue
+  - Oswald
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

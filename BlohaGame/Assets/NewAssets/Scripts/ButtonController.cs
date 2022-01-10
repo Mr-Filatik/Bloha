@@ -53,7 +53,11 @@ public class ButtonController : MonoBehaviour
     private void Awake()
     {
         initData = GameObject.Find("Init").GetComponent<InitController>();
-        text.text = initData.GetText(name);
+
+        LanguageEventManager.OnChangeLanguage.AddListener(ChangeLanguage);
+
+        ChangeLanguage();
+
         state = initData.GetToggleState(name);
         if (state)
         {
@@ -69,5 +73,17 @@ public class ButtonController : MonoBehaviour
         }
     }
 
+    private void ChangeLanguage()
+    {
+        text.text = initData.GetText(name);
+        if (state)
+        {
+            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disable");
+        }
+        else
+        {
+            button.gameObject.GetComponentInChildren<Text>().text = initData.GetText("Disabled");
+        }
+    }
     #endregion
 }

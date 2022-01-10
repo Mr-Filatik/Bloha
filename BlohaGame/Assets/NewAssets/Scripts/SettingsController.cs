@@ -46,7 +46,7 @@ public class SettingsController : MonoBehaviour
         float width = ((int)(Screen.width * 0.8f) / 100) * 100f;
         initData = GameObject.Find("Init").GetComponent<InitController>();
 
-        int number = buttons.transform.childCount;
+        /*int number = buttons.transform.childCount;
 
         image = background.transform.GetChild(0).gameObject.GetComponent<Image>();
         image.transform.localScale = new Vector3(ratio, ratio, ratio);
@@ -65,7 +65,7 @@ public class SettingsController : MonoBehaviour
             element = buttons.transform.GetChild(i).gameObject;
             element.transform.localScale = new Vector3(ratio, ratio, ratio);
             element.transform.localPosition = new Vector3(0f, height / 2f - 250f * ratio * (i + 1), 0f);
-        }
+        }*/
         //backImage.rectTransform.sizeDelta = new Vector2(Screen.height * (sizeImages.x / sizeImages.y), Screen.height);
         //centers.transform.GetChild(0).gameObject;
     }

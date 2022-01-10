@@ -53,7 +53,11 @@ public class ToggleController : MonoBehaviour
     private void Awake()
     {
         initData = GameObject.Find("Init").GetComponent<InitController>();
-        text.text = initData.GetText(name);
+
+        LanguageEventManager.OnChangeLanguage.AddListener(ChangeLanguage);
+
+        ChangeLanguage();
+
         state = initData.GetToggleState(name);
         if (state)
         {
@@ -65,6 +69,13 @@ public class ToggleController : MonoBehaviour
             image.transform.localPosition = new Vector3(-100f, 0f, 0f);
             image.color = falseColor;
         }
+        
     }
+
+    private void ChangeLanguage()
+    {
+        text.text = initData.GetText(name);
+    }
+
     #endregion
 }
