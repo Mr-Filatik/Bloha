@@ -6,7 +6,9 @@ public class InitController : MonoBehaviour
 {
     #region SerializeField Variables
 
-    [SerializeField] private SettingsController settingsController = null; 
+    [SerializeField] private SettingsController settingsController = null;
+    [SerializeField] private string[] languages = new string[] { "ENGLISH", "РУССКИЙ" };
+    [SerializeField] private Sprite[] flags = null;
 
     #endregion
 
@@ -75,6 +77,7 @@ public class InitController : MonoBehaviour
             if (name == "Ads") return "ADS";
             if (name == "Disable") return "DISABLE";
             if (name == "Disabled") return "DISABLED";
+            if (name == "Settings") return "SETTINGS";
         }
         if (language == "РУССКИЙ")
         {
@@ -85,8 +88,22 @@ public class InitController : MonoBehaviour
             if (name == "Ads") return "РЕКЛАМА";
             if (name == "Disable") return "ОТКЛЮЧИТЬ";
             if (name == "Disabled") return "ОТКЛЮЧЕНО";
+            if (name == "Settings") return "НАСТРОЙКИ";
         }
         return "NONE";
+    }
+
+    public Sprite GetFlag(string name)
+    {
+        string language = GetLanguage();
+        for(int i = 0; i < languages.GetLength(0); i++)
+        {
+            if (language == languages[i])
+            {
+                return flags[i];
+            }
+        }
+        return null;
     }
 
     public string GetLanguage()
@@ -100,7 +117,8 @@ public class InitController : MonoBehaviour
         {
             switch (Application.systemLanguage)
             {
-                //case SystemLanguage.Russian: PlayerPrefs.SetString("Language", "РУССКИЙ"); break;
+                case SystemLanguage.Russian: PlayerPrefs.SetString("Language", "РУССКИЙ"); break;
+                case SystemLanguage.English: PlayerPrefs.SetString("Language", "ENGLISH"); break;
                 default: PlayerPrefs.SetString("Language", "ENGLISH"); break;
             }
         }
@@ -117,16 +135,16 @@ public class InitController : MonoBehaviour
         {
             switch (Application.systemLanguage)
             {
-                //case SystemLanguage.Russian: PlayerPrefs.SetString("Language", "РУССКИЙ"); break;
+                case SystemLanguage.Russian: PlayerPrefs.SetString("Language", "РУССКИЙ"); break;
+                case SystemLanguage.English: PlayerPrefs.SetString("Language", "ENGLISH"); break;
                 default: PlayerPrefs.SetString("Language", "ENGLISH"); break;
             }
         }
-        //добавить вызов для смены языка всем кнопкам один метод на всех панелях, отдельный скрипт
     }
 
     public string[] GetLanguages()
     {
-        return new string[] { "ENGLISH", "РУССКИЙ" };
+        return languages;
     }
 
     //----------------------ADS

@@ -4,21 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SelectorController : MonoBehaviour
+public class LanguageController : MonoBehaviour
 {
     #region SerializeField Variables
 
     [SerializeField] private Text text = null;
-    [SerializeField] private Text item = null;
+    [SerializeField] private Image item = null;
     [SerializeField] private Button rightButton = null;
     [SerializeField] private Button leftButton = null;
-    [SerializeField] private Button saveButton = null;
 
     #endregion
 
     #region Public Properties
 
-    //public bool State => state;
+
 
     #endregion
 
@@ -39,7 +38,10 @@ public class SelectorController : MonoBehaviour
             if (state < states.Length - 1)
             {
                 state++;
-                item.text = states[state];
+            }
+            else
+            {
+                state = 0;
             }
         }
         else
@@ -47,47 +49,13 @@ public class SelectorController : MonoBehaviour
             if (state > 0)
             {
                 state--;
-                item.text = states[state];
+            }
+            else
+            {
+                state = states.GetLength(0) - 1;
             }
         }
-        if (state == 0)
-        {
-            leftButton.interactable = false;
-        }
-        else
-        {
-            leftButton.interactable = true;
-        }
-        if (state == states.Length - 1)
-        {
-            rightButton.interactable = false;
-        }
-        else
-        {
-            rightButton.interactable = true;
-        }
-        if (states[state] != initData.GetLanguage())
-        {
-            saveButton.interactable = true;
-        }
-        else
-        {
-            saveButton.interactable = false;
-        }
-    }
-
-    public void SaveState()
-    {
         initData.SetLanguage(states[state]);
-        if (states[state] != initData.GetLanguage())
-        {
-            saveButton.interactable = true;
-        }
-        else
-        {
-            saveButton.interactable = false;
-        }
-
         LanguageEventManager.ChangeLanguage();
     }
 
@@ -98,11 +66,7 @@ public class SelectorController : MonoBehaviour
     private void Awake()
     {
         initData = GameObject.Find("Init").GetComponent<InitController>();
-
         LanguageEventManager.OnChangeLanguage.AddListener(ChangeLanguage);
-
-        ChangeLanguage();
-
         states = initData.GetLanguages();
         for (int i = 0; i < states.Length; i++)
         {
@@ -111,29 +75,13 @@ public class SelectorController : MonoBehaviour
                 state = i;
             }
         }
-        item.text = states[state];
-        if (state == 0)
-        {
-            leftButton.interactable = false;
-        }
-        else
-        {
-            leftButton.interactable = true;
-        }
-        if (state == states.Length - 1)
-        {
-            rightButton.interactable = false;
-        }
-        else
-        {
-            rightButton.interactable = true;
-        }
-        saveButton.interactable = false;
+        ChangeLanguage();
     }
 
     private void ChangeLanguage()
     {
         text.text = initData.GetText(name);
+        item.sprite = initData.GetFlag(states[state]);
     }
     #endregion
 }
